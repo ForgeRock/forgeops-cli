@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-if ! curl -o /tmp/goreleaser.tar.gz -L https://github.com/goreleaser/goreleaser/releases/latest/download/goreleaser_Linux_x86_64.tar.gz;
+case "${OSTYPE}" in
+    "darwin"*) os="Darwin";;
+    "linux"*) os="Linux";;
+esac
+
+if ! curl -o /tmp/goreleaser.tar.gz -L "https://github.com/goreleaser/goreleaser/releases/latest/download/goreleaser_${os}_x86_64.tar.gz";
 then
     echo "failed to download go releaser"
     exit 1;

@@ -1,3 +1,4 @@
+timeout: 1200s
 steps:
 # Setup the workspace so we have a viable place to point GOPATH at.
 - name: gcr.io/cloud-builders/go

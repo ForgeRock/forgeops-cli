@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
+	"github.com/ForgeRock/forgeops-cli/internal/printer"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +14,7 @@ var rootCmd = &cobra.Command{
 	Use:   "forgeops",
 	Short: "forgeops is a tool for managing ForgeRock platform deployments",
 	Long: `
-	This is some long help information
+	This tool helps deploying the ForgeRock platform, debug common issues, and validate environments.
 	`,
 }
 
@@ -22,7 +22,7 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		printer.Errorln(err.Error())
 		os.Exit(1)
 	}
 }

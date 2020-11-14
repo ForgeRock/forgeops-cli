@@ -1,9 +1,12 @@
 module github.com/ForgeRock/forgeops-cli
 
-go 1.14
+go 1.15
 
 require (
-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-	github.com/spf13/cobra v0.0.3
-	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/fatih/color v1.7.0
+	github.com/spf13/cobra v1.1.1
+	k8s.io/apimachinery v0.18.6
+	k8s.io/client-go v0.18.6
+	sigs.k8s.io/controller-runtime v0.6.3 // indirect
+	sigs.k8s.io/structured-merge-diff v0.0.0-20190525122527-15d366b2352e // indirect
 )

@@ -25,6 +25,7 @@ release:
 
 install-tools:
 	./hack/install-goreleaser.sh
+	./hack/install-linter.sh
 
 clean:
 	@test ! -e bin/${BIN_NAME} || rm bin/${BIN_NAME}
