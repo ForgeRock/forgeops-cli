@@ -5,6 +5,7 @@ import (
 
 	"github.com/ForgeRock/forgeops-cli/internal/printer"
 	"github.com/spf13/cobra"
+	"github.com/spf13/cobra/doc"
 )
 
 var cfgFile string
@@ -16,6 +17,11 @@ var rootCmd = &cobra.Command{
 	Long: `
 	This tool helps deploying the ForgeRock platform, debug common issues, and validate environments.
 	`,
+}
+
+// Doc Generate Documents
+func Doc() {
+	doc.GenMarkdownTree(rootCmd, "./docs")
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
