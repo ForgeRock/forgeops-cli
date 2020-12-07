@@ -19,9 +19,9 @@ type operatorCheck struct {
 // CheckOperators validate operators are installed and running
 func CheckOperators(ctx context.Context, client *kubernetes.Clientset) error {
 	operatorReadyReplicas := map[string]*operatorCheck{
-		"secret-agent-controller-manager": &operatorCheck{1, 0, false},
-		"ingress-nginx-controller":        &operatorCheck{1, 0, false},
-		"cert-manager":                    &operatorCheck{1, 0, false}}
+		"secret-agent-controller-manager": {1, 0, false},
+		"ingress-nginx-controller":        {1, 0, false},
+		"cert-manager":                    {1, 0, false}}
 
 	// Check Installed
 	deploys, err := client.AppsV1().Deployments("").List(ctx, metav1.ListOptions{})

@@ -3,7 +3,7 @@ package doctor
 import (
 	"context"
 
-	"github.com/ForgeRock/forgeops-cli/internal/k8s"
+	"github.com/ForgeRock/forgeops-cli/internal/factory"
 	"github.com/ForgeRock/forgeops-cli/internal/printer"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -21,8 +21,8 @@ var sacResource = schema.GroupVersionResource{
 var SACStatus = "Completed"
 
 // CheckSAC validate SAC is ready
-func CheckSAC(ctx context.Context, namespace string, clientMgr k8s.ClientMgr) (bool, error) {
-	client, err := clientMgr.DynamicClient()
+func CheckSAC(ctx context.Context, namespace string, f factory.Factory) (bool, error) {
+	client, err := f.DynamicClient()
 	if err != nil {
 		return false, err
 	}
@@ -75,6 +75,6 @@ func CheckSAC(ctx context.Context, namespace string, clientMgr k8s.ClientMgr) (b
 }
 
 // CheckConfigMaps validate platform configmaps
-func CheckConfigMaps(ctx context.Context, clientMgr k8s.ClientMgr) (bool, error) {
+func CheckConfigMaps(ctx context.Context, f factory.Factory) (bool, error) {
 	return false, nil
 }

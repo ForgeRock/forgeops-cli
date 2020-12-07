@@ -2,21 +2,17 @@ package cmd
 
 import (
 	"context"
-	"path/filepath"
 
-	"github.com/spf13/cobra"
-	"k8s.io/client-go/tools/clientcmd"
-	"k8s.io/client-go/util/homedir"
-
-	"github.com/ForgeRock/forgeops-cli/internal/k8s"
+	"github.com/ForgeRock/forgeops-cli/internal/factory"
 	"github.com/ForgeRock/forgeops-cli/internal/printer"
 	"github.com/ForgeRock/forgeops-cli/pkg/doctor"
+	"github.com/spf13/cobra"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 // cmd globals config
 var kubeConfig string
 var overrides = &clientcmd.ConfigOverrides{}
-var k8sClientMgr k8s.ClientMgr
 var ctx context.Context
 
 // Platform
@@ -54,7 +50,7 @@ var platform = &cobra.Command{
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		namespace := cmd.Flag("namespace")
-		_, err := doctor.CheckSAC(ctx, namespace.Value.String(), k8sClientMgr)
+		_, err := doctor.CheckSAC(ctx, namespace.Value.String(), clientFactory)
 		return err
 	},
 }
@@ -72,7 +68,7 @@ var operators = &cobra.Command{
 	Checks for a minimum ready count of one.
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := k8sClientMgr.StaticClient()
+		client, err := clientFactory.StaticClient()
 		if err != nil {
 			return err
 		}
@@ -90,33 +86,24 @@ var doctorCmd = &cobra.Command{
 	Short:   "Diagnose common cluster and platform deployments",
 	Long: `
 	Diagnose common cluster and platform deployments
-	`,
+    `,
 	// Configure Client Mgr for all subcommands
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		k8sClientMgr = k8s.NewClientMgr(kubeConfig, overrides)
+		clientFactory = factory.NewFactory(kubeConfigFlags)
 	},
 }
 
 func init() {
 	ctx = context.Background()
-	// kubeconfig
-	if home := homedir.HomeDir(); home != "" {
-		doctorCmd.Flags().StringVar(&kubeConfig, "kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		doctorCmd.Flags().StringVar(&kubeConfig, "kubeconfig", "", "absolute path to the kubeconfig file")
-	}
-	clientcmd.BindOverrideFlags(overrides, doctorCmd.PersistentFlags(), clientcmd.RecommendedConfigOverrideFlags(""))
 
 	// operators
 	operators.LocalFlags().StringSlice("ignore-operators", ignoreOperators, "comma seperated list of operators that should ignored during checks")
 
 	//	platform
-	// platform.PersistentFlags().StringP("namespace", "n", "prod", "namespace to check in")
 	platform.LocalFlags().StringSlice("ignore-products", ignoreProducts, "comma seperated list of products that should ignored during checks")
 	platform.AddCommand(ds)
 
 	// module command
-	doctorCmd.PersistentFlags().StringVar(&kubeConfig, "kubeconfig", "", "Path to the kubeconfig file to use for CLI requests.")
 	doctorCmd.AddCommand(operators)
 	doctorCmd.AddCommand(platform)
 

@@ -10,6 +10,8 @@ IMAGE_NAME := "forgerock/forgeops-cli"
 
 PR_VERSION_NAME = "$(VERSION)-pr.$(PR_NUMBER)"
 
+all: build
+
 pr-tag:
 	git tag "$(PR_VERSION_NAME)"
 
@@ -31,6 +33,19 @@ clean:
 	@test ! -e bin/${BIN_NAME} || rm bin/${BIN_NAME}
 	@test ! -e dist || rm -r dist
 
-test:
+test tests:
 	@go test ./...
 	@echo "tests completed"
+
+
+# Run go fmt against code
+fmt:
+	go fmt ./...
+
+# Run go vet against code
+vet:
+	go vet ./...
+
+# Build forgeops binary
+build: fmt vet test
+	go build -o bin/forgeops main.go
