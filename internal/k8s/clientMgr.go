@@ -12,6 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/resource"
@@ -30,6 +31,9 @@ type ClientMgr interface {
 	GetObjectsFromPath(path string) ([]*resource.Info, error)
 	ApplyObject(info *resource.Info) error
 	ApplyObjectInOtherNamespace(info *resource.Info, namespace string) error
+	WaitForResource(timeoutSecs int, ns, name string, gvr schema.GroupVersionResource) (bool, error)
+	WaitForResourceStatusCondition(timeoutSecs int, ns, name, conditionStr string, gvr schema.GroupVersionResource) (bool, error)
+	WaitForResourceReplicas(timeoutSecs int, ns, name, replicas string, gvr schema.GroupVersionResource) (bool, error)
 }
 
 type clientMgr struct {
@@ -111,7 +115,7 @@ func (cmgr clientMgr) ApplyObjectInOtherNamespace(info *resource.Info, namespace
 				return err
 			}
 			info.Refresh(obj, true)
-			printer.Printf(fmt.Sprintf("%s %q created", info.ResourceMapping().GroupVersionKind.Kind, info.Name))
+			printer.Noticef(fmt.Sprintf("%s %q created", info.ResourceMapping().GroupVersionKind.Kind, info.Name))
 			return nil
 		}
 		return err
@@ -143,7 +147,7 @@ func (cmgr clientMgr) ApplyObjectInOtherNamespace(info *resource.Info, namespace
 		return err
 	}
 	info.Refresh(obj, true)
-	printer.Printf(fmt.Sprintf("%s %q applied", info.ResourceMapping().GroupVersionKind.Kind, info.Name))
+	printer.Noticef(fmt.Sprintf("%s %q applied", info.ResourceMapping().GroupVersionKind.Kind, info.Name))
 	return nil
 
 }
