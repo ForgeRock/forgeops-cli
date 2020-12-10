@@ -7,6 +7,7 @@ import (
 	"github.com/ForgeRock/forgeops-cli/internal/printer"
 	"github.com/ForgeRock/forgeops-cli/pkg/doctor"
 	"github.com/spf13/cobra"
+	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
@@ -14,6 +15,7 @@ import (
 var kubeConfig string
 var overrides = &clientcmd.ConfigOverrides{}
 var ctx context.Context
+var doctorFlags *genericclioptions.ConfigFlags
 
 // Platform
 // TODO not sure if this will be required once we have a more robust pre kubernetes client command setup
@@ -89,12 +91,15 @@ var doctorCmd = &cobra.Command{
     `,
 	// Configure Client Mgr for all subcommands
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		clientFactory = factory.NewFactory(kubeConfigFlags)
+		clientFactory = factory.NewFactory(doctorFlags)
 	},
 }
 
 func init() {
 	ctx = context.Background()
+
+	// Install k8s flags
+	doctorFlags = initK8sFlags(doctorCmd.PersistentFlags())
 
 	// operators
 	operators.LocalFlags().StringSlice("ignore-operators", ignoreOperators, "comma seperated list of operators that should ignored during checks")

@@ -2,11 +2,13 @@ package cmd
 
 import (
 	"github.com/ForgeRock/forgeops-cli/internal/factory"
-	"github.com/ForgeRock/forgeops-cli/pkg/install"
+	"github.com/ForgeRock/forgeops-cli/pkg/apply"
 	"github.com/spf13/cobra"
+	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
 
 // cmd globals config
+var applyFlags *genericclioptions.ConfigFlags
 
 var quickstart = &cobra.Command{
 	Use:     "quickstart",
@@ -18,7 +20,7 @@ var quickstart = &cobra.Command{
 	  * use --tag to specify a specific CDQ version to install
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := install.Quickstart(clientFactory, tag)
+		err := apply.Quickstart(clientFactory, tag)
 		return err
 	},
 }
@@ -33,29 +35,32 @@ var secretAgent = &cobra.Command{
 	  * use --tag to specify a specific secret-agent version to install
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := install.SecretAgent(clientFactory, tag)
+		err := apply.SecretAgent(clientFactory, tag)
 		return err
 	},
 }
 
-var installCmd = &cobra.Command{
-	Use:   "install",
+var applyCmd = &cobra.Command{
+	Use:   "apply",
 	Short: "Install common platform components",
 	Long: `
-	Install common platform components
+	Apply common platform components
     `,
 	// Configure Client Mgr for all subcommands
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		clientFactory = factory.NewFactory(kubeConfigFlags)
+		clientFactory = factory.NewFactory(applyFlags)
 	},
 }
 
 func init() {
-	// Install command-specific flags
-	installCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "", "Tag/version to install")
+	// Install k8s flags
+	applyFlags = initK8sFlags(applyCmd.PersistentFlags())
 
-	installCmd.AddCommand(quickstart)
-	installCmd.AddCommand(secretAgent)
+	// Apply command-specific flags
+	applyCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "", "Tag/version to apply")
 
-	rootCmd.AddCommand(installCmd)
+	applyCmd.AddCommand(quickstart)
+	applyCmd.AddCommand(secretAgent)
+
+	rootCmd.AddCommand(applyCmd)
 }

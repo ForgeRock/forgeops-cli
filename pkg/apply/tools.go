@@ -1,4 +1,4 @@
-package install
+package apply
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ func SecretAgent(clientFactory factory.Factory, version string) error {
 	}
 
 	printer.Noticef("Installing secret-agent version: %q", version)
-	if err := Install(clientFactory, quickstartPath); err != nil {
+	if err := Apply(clientFactory, quickstartPath); err != nil {
 		return err
 	}
 	printer.Noticef("Installed secret-agent version: %q", version)

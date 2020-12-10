@@ -7,12 +7,12 @@ import (
 	"github.com/ForgeRock/forgeops-cli/internal/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
+	"github.com/spf13/pflag"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	cliflag "k8s.io/component-base/cli/flag"
 )
 
 var cfgFile string
-var kubeConfigFlags *genericclioptions.ConfigFlags
 var clientFactory factory.Factory
 var tag string
 
@@ -40,11 +40,15 @@ func Execute() {
 }
 
 func init() {
+	// There's nothing here
+}
+
+func initK8sFlags(flags *pflag.FlagSet) *genericclioptions.ConfigFlags {
 	// Install k8s flags
-	flags := installCmd.PersistentFlags()
 	flags.SetNormalizeFunc(cliflag.WarnWordSepNormalizeFunc) // Warn for "_" flags
 	// Normalize all flags coming from other packages. a.k.a. change all "_" to "-". e.g. glog package
 	flags.SetNormalizeFunc(cliflag.WordSepNormalizeFunc)
-	kubeConfigFlags = genericclioptions.NewConfigFlags(true).WithDeprecatedPasswordFlag()
+	kubeConfigFlags := genericclioptions.NewConfigFlags(true).WithDeprecatedPasswordFlag()
 	kubeConfigFlags.AddFlags(flags)
+	return kubeConfigFlags
 }

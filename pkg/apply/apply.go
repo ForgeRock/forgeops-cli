@@ -1,4 +1,4 @@
-package install
+package apply
 
 import (
 	"fmt"
@@ -8,8 +8,8 @@ import (
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 )
 
-// Install Installs the quickstart in the namespace provided
-func Install(clientFactory factory.Factory, path string) error {
+// Apply Installs the quickstart in the namespace provided
+func Apply(clientFactory factory.Factory, path string) error {
 	errs := []error{}
 	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
 	cfg, err := k8sCntMgr.GetConfigFlags()

@@ -10,6 +10,7 @@ require (
 	github.com/imdario/mergo v0.3.9 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/spf13/cobra v1.1.1
+	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.5.1 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	k8s.io/apimachinery v0.19.4

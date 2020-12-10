@@ -1,4 +1,4 @@
-package install
+package apply
 
 import (
 	"context"
@@ -46,7 +46,7 @@ func Quickstart(clientFactory factory.Factory, version string) error {
 		return err
 	}
 	printer.NoticeHif("Installing CDQ version: %q", version)
-	if err := Install(clientFactory, quickstartPath); err != nil {
+	if err := Apply(clientFactory, quickstartPath); err != nil {
 		return err
 	}
 	printer.Noticef("Deployed CDQ version: %q", version)
