@@ -38,9 +38,12 @@ func (cmgr clientMgr) watchEventsForCondition(timeoutSecs int, ns, name string, 
 		}
 		// If the object is present, let's evaluate if the condition has already been met.
 		if len(gottenObjList.Items) != 0 {
-			return condition(watch.Event{}, &gottenObjList.Items[0])
+			if ok, err := condition(watch.Event{}, &gottenObjList.Items[0]); ok && err == nil {
+				printer.Noticef(fmt.Sprintf("condition met for %s/%s", gvr.Resource, name))
+				return true, nil
+			}
 		}
-
+		// The condition has not been met. Set a watch on the object
 		watchOptions := metav1.ListOptions{}
 		watchOptions.FieldSelector = nameSelector
 		watchOptions.ResourceVersion = gottenObjList.GetResourceVersion()
