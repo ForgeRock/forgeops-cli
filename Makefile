@@ -2,13 +2,13 @@
 
 BIN_NAME=forgeops
 
-VERSION := $(shell grep "const Version " pkg/version/version.go | awk -F " = " '{ print $$2 }')
+VERSION := $(shell grep "var Version " pkg/version/version.go | awk -F " = " -F '"' '{ print $$2 }')
 GIT_COMMIT=$(shell git rev-parse HEAD)
 GIT_DIRTY=$(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)
 BUILD_DATE=$(shell date '+%Y-%m-%d-%H:%M:%S')
 IMAGE_NAME := "forgerock/forgeops-cli"
 
-PR_VERSION_NAME = "$(VERSION)-pr.$(PR_NUMBER)"
+PR_VERSION_NAME = ${VERSION}-pr.${PR_NUMBER}
 
 all: build
 
@@ -16,13 +16,13 @@ pr-tag:
 	git tag "$(PR_VERSION_NAME)"
 
 snapshot:
-	BUILD_DATE=${BUILD_DATE} GIT_COMMIT=${GIT_COMMIT} GIT_DIRTY=${GIT_DIRTY} goreleaser --snapshot
+	TAG_NAME=${PR_VERSION_NAME} BUILD_DATE=${BUILD_DATE} GIT_COMMIT=${GIT_COMMIT} GIT_DIRTY=${GIT_DIRTY} goreleaser --snapshot
 
 pr-build: pr-tag snapshot
 	@echo "PR Build Completed: gs://engineering-devops_cloudbuild/forgeops-cli-artifacts/$(PR_NUMBER)"
 
 release:
-	BUILD_DATE=${BUILD_DATE} GIT_COMMIT=${GIT_COMMIT} GIT_DIRTY=${GIT_DIRTY} goreleaser
+	TAG_NAME=${TAG_NAME} BUILD_DATE=${BUILD_DATE} GIT_COMMIT=${GIT_COMMIT} GIT_DIRTY=${GIT_DIRTY} goreleaser
 	@echo "Released: VERSION=${VERSION} BUILD_DATE=${BUILD_DATE} GIT_COMMIT=${GIT_COMMIT} GIT_DIRTY=${GIT_DIRTY}"
 
 install-tools:
@@ -36,7 +36,6 @@ clean:
 test tests:
 	@go test ./...
 	@echo "tests completed"
-
 
 # Run go fmt against code
 fmt:

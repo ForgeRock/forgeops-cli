@@ -5,6 +5,7 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
+    binary: forgeops
     goarch:
       - amd64
       - arm
@@ -15,6 +16,7 @@ builds:
       - darwin
     ldflags:
       - -X github.com/ForgeRock/forgeops-cli/pkg/version.GitCommit={{.Env.GIT_COMMIT}}{{.Env.GIT_DIRTY}} 
+      - -X github.com/ForgeRock/forgeops-cli/pkg/version.Version={{.Env.TAG_NAME}} 
       - -X github.com/ForgeRock/forgeops-cli/pkg/version.BuildDate={{.Env.BUILD_DATE}}
 archives:
   - replacements:
