@@ -9,16 +9,16 @@ import (
 
 // SecretAgent Installs the SecretAgent operator
 func SecretAgent(clientFactory factory.Factory, version string) error {
-	quickstartPath := "https://github.com/ForgeRock/secret-agent/releases/latest/download/secret-agent.yaml"
+	fpath := "https://github.com/ForgeRock/secret-agent/releases/latest/download/secret-agent.yaml"
 	if len(version) == 0 {
 		version = "latest"
 	}
 	if version != "latest" {
-		quickstartPath = fmt.Sprintf("https://github.com/ForgeRock/secret-agent/releases/download/%s/secret-agent.yaml", version)
+		fpath = fmt.Sprintf("https://github.com/ForgeRock/secret-agent/releases/download/%s/secret-agent.yaml", version)
 	}
 
 	printer.Noticef("Installing secret-agent version: %q", version)
-	if err := Apply(clientFactory, quickstartPath); err != nil {
+	if err := Apply(clientFactory, fpath); err != nil {
 		return err
 	}
 	printer.Noticef("Installed secret-agent version: %q", version)

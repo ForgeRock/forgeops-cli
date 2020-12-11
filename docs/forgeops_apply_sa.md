@@ -7,11 +7,21 @@ Installs the ForgeRock secret-agent
 
 	Installs the ForgeRock secret-agent:
 	  * Applies the latest secret-agent manifest
-	  * use --tag to specify a specific secret-agent version to install
-	
+      * use --tag to specify a specific secret-agent version to install
 
 ```
 forgeops apply sa [flags]
+```
+
+### Examples
+
+```
+
+      # Install the "latest" secret-agent.
+      forgeops apply sa
+
+      # Install a specific version of the secret-agent.
+      forgeops apply sa -t v0.2.1
 ```
 
 ### Options

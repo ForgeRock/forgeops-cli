@@ -11,6 +11,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
@@ -29,8 +30,11 @@ func NewK8sClientMgr(f factory.Factory) ClientMgr {
 type ClientMgr interface {
 	factory.Factory
 	GetObjectsFromPath(path string) ([]*resource.Info, error)
+	GetObjectsFromServer(resourceType, name string) ([]*resource.Info, error)
 	ApplyObject(info *resource.Info) error
 	ApplyObjectInOtherNamespace(info *resource.Info, namespace string) error
+	DeleteObject(info *resource.Info) error
+	DeleteObjectFromOtherNamespace(info *resource.Info, namespace string) error
 	WaitForResource(timeoutSecs int, ns, name string, gvr schema.GroupVersionResource) (bool, error)
 	WaitForResourceStatusCondition(timeoutSecs int, ns, name, conditionStr string, gvr schema.GroupVersionResource) (bool, error)
 	WaitForResourceReplicas(timeoutSecs int, ns, name, replicas string, gvr schema.GroupVersionResource) (bool, error)
@@ -48,7 +52,7 @@ func (NullSchema) ValidateBytes(data []byte) error { return nil }
 
 // GetObjectsFromPath Obtains objects from filepath or url
 func (cmgr clientMgr) GetObjectsFromPath(path string) ([]*resource.Info, error) {
-	usage := "contains the configuration to apply"
+	usage := "contains the manifest to process"
 	cfg, err := cmgr.GetConfigFlags()
 	if err != nil {
 		return nil, err
@@ -71,6 +75,34 @@ func (cmgr clientMgr) GetObjectsFromPath(path string) ([]*resource.Info, error) 
 		NamespaceParam(*cfg.Namespace).DefaultNamespace().
 		// FilenameParam(len(*cfg.Namespace) > 0, &fileNameOpts).
 		FilenameParam(false, &fileNameOpts).
+		Flatten().
+		Do()
+	objects, err := r.Infos()
+	return objects, err
+}
+
+// GetObjectsFromPath Obtains objects from the k8s server
+// if no name is provided, this function will return all objects of the given type
+func (cmgr clientMgr) GetObjectsFromServer(resourceType, name string) ([]*resource.Info, error) {
+	cfg, err := cmgr.GetConfigFlags()
+	if err != nil {
+		return nil, err
+	}
+	selectAll := true
+	nameSelector := ""
+	if len(name) > 0 {
+		selectAll = false
+		nameSelector = fields.OneTermEqualSelector("metadata.name", name).String()
+	}
+	builder := cmgr.Builder()
+	r := builder.
+		Unstructured().
+		ContinueOnError().
+		NamespaceParam(*cfg.Namespace).DefaultNamespace().
+		SelectAllParam(selectAll).
+		FieldSelectorParam(nameSelector).
+		SingleResourceType().
+		ResourceTypes(resourceType).
 		Flatten().
 		Do()
 	objects, err := r.Infos()
@@ -103,7 +135,6 @@ func (cmgr clientMgr) ApplyObjectInOtherNamespace(info *resource.Info, namespace
 				if err := metadataAccessor.SetNamespace(info.Object, namespace); err != nil {
 					return err
 				}
-
 			}
 		}
 	}
@@ -150,6 +181,48 @@ func (cmgr clientMgr) ApplyObjectInOtherNamespace(info *resource.Info, namespace
 	printer.Noticef(fmt.Sprintf("%s %q applied", info.ResourceMapping().GroupVersionKind.Kind, info.Name))
 	return nil
 
+}
+
+func (cmgr clientMgr) DeleteObject(info *resource.Info) error {
+	return cmgr.DeleteObjectFromOtherNamespace(info, info.Namespace)
+}
+
+func (cmgr clientMgr) DeleteObjectFromOtherNamespace(info *resource.Info, namespace string) error {
+	var metadataAccessor = meta.NewAccessor()
+	helper := resource.NewHelper(info.Client, info.Mapping).
+		WithFieldManager("forgeops")
+
+	isNamespace := strings.ToLower(info.ResourceMapping().GroupVersionKind.Kind) == "namespace"
+	if namespace != "" {
+		// if the object type is a namespace OR
+		// if the object is a namespaced object and the namespace provided is different, then change the namespace
+		if isNamespace || (info.Namespaced() && info.Namespace != namespace) {
+			if isNamespace {
+				info.Name = namespace
+				if err := metadataAccessor.SetName(info.Object, namespace); err != nil {
+					return err
+				}
+			} else {
+				info.Namespace = namespace
+				if err := metadataAccessor.SetNamespace(info.Object, namespace); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	var gracePeriodSeconds int64 = 30
+	propagationPolicy := metav1.DeletePropagationBackground
+	options := metav1.DeleteOptions{
+		GracePeriodSeconds: &gracePeriodSeconds,
+		PropagationPolicy:  &propagationPolicy,
+	}
+	obj, err := helper.DeleteWithOptions(info.Namespace, info.Name, &options)
+	if err != nil {
+		return err
+	}
+	info.Refresh(obj, true)
+	printer.Noticef(fmt.Sprintf("%s %q deleted", info.ResourceMapping().GroupVersionKind.Kind, info.Name))
+	return nil
 }
 
 // clearManagedFields removes any entry from metadata.managedFields

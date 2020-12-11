@@ -17,8 +17,16 @@ var quickstart = &cobra.Command{
 	Long: `
 	Installs the ForgeRock Cloud Deployment Quickstart (CDQ):
 	  * Applies the latest quickstart manifest
-	  * use --tag to specify a specific CDQ version to install
-	`,
+      * use --tag to specify a specific CDQ version to install`,
+	Example: `
+      # Install the "latest" CDQ in the "default" namespace.
+      forgeops apply quickstart
+    
+      # Install the CDQ in the "default" namespace.
+      forgeops apply quickstart -t 2020.10.28-AlSugoDiNoci
+      
+      # Install the CDQ in a different namespace.
+      forgeops apply quickstart -t 2020.10.28-AlSugoDiNoci -n mynamespace`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := apply.Quickstart(clientFactory, tag)
 		return err
@@ -32,8 +40,13 @@ var secretAgent = &cobra.Command{
 	Long: `
 	Installs the ForgeRock secret-agent:
 	  * Applies the latest secret-agent manifest
-	  * use --tag to specify a specific secret-agent version to install
-	`,
+      * use --tag to specify a specific secret-agent version to install`,
+	Example: `
+      # Install the "latest" secret-agent.
+      forgeops apply sa
+
+      # Install a specific version of the secret-agent.
+      forgeops apply sa -t v0.2.1`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := apply.SecretAgent(clientFactory, tag)
 		return err

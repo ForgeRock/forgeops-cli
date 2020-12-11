@@ -17,6 +17,7 @@ forgeops is a tool for managing ForgeRock platform deployments
 ### SEE ALSO
 
 * [forgeops apply](forgeops_apply.md)	 - Install common platform components
+* [forgeops delete](forgeops_delete.md)	 - Uninstalls common platform components
 * [forgeops docs](forgeops_docs.md)	 - Generates docs
 * [forgeops doctor](forgeops_doctor.md)	 - Diagnose common cluster and platform deployments
 * [forgeops version](forgeops_version.md)	 - Print the version number of ForgeOps CLI tool
