@@ -16,8 +16,8 @@ var deleteQuickstart = &cobra.Command{
 	Aliases: []string{"qs"},
 	Short:   "Uninstalls the ForgeRock Cloud Deployment Quickstart (CDQ)",
 	Long: `
-	Uninstalls the ForgeRock Cloud Deployment Quickstart (CDQ):
-	  * Deletes the quickstart deployment`,
+    Uninstalls the ForgeRock Cloud Deployment Quickstart (CDQ):
+    * Deletes the quickstart deployment`,
 	Example: `
     # Delete the CDQ from the "default" namespace.
     forgeops delete quickstart
@@ -28,6 +28,8 @@ var deleteQuickstart = &cobra.Command{
 		err := delete.Quickstart(clientFactory, tag, skipUserDelQ)
 		return err
 	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
 }
 
 var deleteSecretAgent = &cobra.Command{
@@ -39,7 +41,9 @@ var deleteSecretAgent = &cobra.Command{
 		return err
 	},
 	// Hide this command from help docs
-	Hidden: true,
+	Hidden:            true,
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
 }
 
 var deleteCmd = &cobra.Command{
@@ -51,6 +55,8 @@ var deleteCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		clientFactory = factory.NewFactory(deleteFlags)
 	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
 }
 
 func init() {

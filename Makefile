@@ -46,5 +46,9 @@ vet:
 	go vet ./...
 
 # Build forgeops binary
-build: fmt vet test
+build: fmt vet test clean
 	go build -o bin/forgeops main.go
+
+# generates forgeops-cli docs
+docs doc: vet fmt
+	go run main.go docs

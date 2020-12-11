@@ -35,6 +35,8 @@ var docsCmd = &cobra.Command{
 		}
 		return nil
 	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
 }
 
 func init() {

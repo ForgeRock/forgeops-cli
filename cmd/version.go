@@ -19,6 +19,8 @@ var versionCmd = &cobra.Command{
 		fmt.Println("Go Version:", version.GoVersion)
 		fmt.Println("OS / Arch:", version.OsArch)
 	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
 }
 
 func init() {

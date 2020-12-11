@@ -34,6 +34,8 @@ var ds = &cobra.Command{
 		printer.Warnln("Not implemented")
 		return nil
 	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
 }
 
 var platform = &cobra.Command{
@@ -55,6 +57,8 @@ var platform = &cobra.Command{
 		_, err := doctor.CheckSAC(ctx, namespace.Value.String(), clientFactory)
 		return err
 	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
 }
 
 // Operators
@@ -67,8 +71,7 @@ var operators = &cobra.Command{
 	Long: `
 	Checks to ensure that required operators are installed and ready.
 	Searches all namespaces for the default deployment of secret agent, nginx-ingress, cert-manager
-	Checks for a minimum ready count of one.
-	`,
+	Checks for a minimum ready count of one.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := clientFactory.StaticClient()
 		if err != nil {
@@ -80,6 +83,8 @@ var operators = &cobra.Command{
 		}
 		return nil
 	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
 }
 
 var doctorCmd = &cobra.Command{
@@ -87,12 +92,13 @@ var doctorCmd = &cobra.Command{
 	Aliases: []string{"dr"},
 	Short:   "Diagnose common cluster and platform deployments",
 	Long: `
-	Diagnose common cluster and platform deployments
-    `,
+	Diagnose common cluster and platform deployments`,
 	// Configure Client Mgr for all subcommands
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		clientFactory = factory.NewFactory(doctorFlags)
 	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
 }
 
 func init() {

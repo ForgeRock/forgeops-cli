@@ -15,9 +15,9 @@ var quickstart = &cobra.Command{
 	Aliases: []string{"qs"},
 	Short:   "Installs the ForgeRock Cloud Deployment Quickstart (CDQ)",
 	Long: `
-	Installs the ForgeRock Cloud Deployment Quickstart (CDQ):
-	  * Applies the latest quickstart manifest
-      * use --tag to specify a specific CDQ version to install`,
+    Installs the ForgeRock Cloud Deployment Quickstart (CDQ):
+    * Applies the latest quickstart manifest
+    * use --tag to specify a specific CDQ version to install`,
 	Example: `
       # Install the "latest" CDQ in the "default" namespace.
       forgeops apply quickstart
@@ -31,6 +31,8 @@ var quickstart = &cobra.Command{
 		err := apply.Quickstart(clientFactory, tag)
 		return err
 	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
 }
 
 var secretAgent = &cobra.Command{
@@ -38,9 +40,9 @@ var secretAgent = &cobra.Command{
 	Aliases: []string{"secret-agent"},
 	Short:   "Installs the ForgeRock secret-agent",
 	Long: `
-	Installs the ForgeRock secret-agent:
-	  * Applies the latest secret-agent manifest
-      * use --tag to specify a specific secret-agent version to install`,
+    Installs the ForgeRock secret-agent:
+    * Applies the latest secret-agent manifest
+    * use --tag to specify a specific secret-agent version to install`,
 	Example: `
       # Install the "latest" secret-agent.
       forgeops apply sa
@@ -51,6 +53,8 @@ var secretAgent = &cobra.Command{
 		err := apply.SecretAgent(clientFactory, tag)
 		return err
 	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
 }
 
 var applyCmd = &cobra.Command{
@@ -63,6 +67,8 @@ var applyCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		clientFactory = factory.NewFactory(applyFlags)
 	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
 }
 
 func init() {

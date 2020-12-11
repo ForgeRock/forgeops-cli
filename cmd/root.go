@@ -21,8 +21,9 @@ var rootCmd = &cobra.Command{
 	Use:   "forgeops",
 	Short: "forgeops is a tool for managing ForgeRock platform deployments",
 	Long: `
-	This tool helps deploying the ForgeRock platform, debug common issues, and validate environments.
-    `,
+    This tool helps deploying the ForgeRock platform, debug common issues, and validate environments.`,
+	DisableAutoGenTag: true,
+	SilenceErrors:     true, //We format and print errors ourselves during Execute().
 }
 
 // Doc Generate Documents
