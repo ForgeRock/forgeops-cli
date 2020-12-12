@@ -37,7 +37,21 @@ var deleteSecretAgent = &cobra.Command{
 	Aliases: []string{"secret-agent"},
 	Short:   "Uninstalls the ForgeRock secret-agent",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := delete.SecretAgent(clientFactory, tag, skipUserDelQ)
+		err := delete.GHResource(clientFactory, "ForgeRock/secret-agent", "secret-agent.yaml", tag, true, skipUserDelQ)
+		return err
+	},
+	// Hide this command from help docs
+	Hidden:            true,
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
+}
+
+var deleteDsOperator = &cobra.Command{
+	Use:     "ds",
+	Aliases: []string{"ds-operator"},
+	Short:   "Uninstalls the ForgeRock ds-operator",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		err := delete.GHResource(clientFactory, "ForgeRock/ds-operator", "ds-operator.yaml", tag, true, skipUserDelQ)
 		return err
 	},
 	// Hide this command from help docs
@@ -69,6 +83,7 @@ func init() {
 
 	deleteCmd.AddCommand(deleteQuickstart)
 	deleteCmd.AddCommand(deleteSecretAgent)
+	deleteCmd.AddCommand(deleteDsOperator)
 
 	rootCmd.AddCommand(deleteCmd)
 }

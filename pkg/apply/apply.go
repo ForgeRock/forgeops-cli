@@ -6,17 +6,24 @@ import (
 	"github.com/ForgeRock/forgeops-cli/internal/factory"
 	"github.com/ForgeRock/forgeops-cli/internal/k8s"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
+	"k8s.io/cli-runtime/pkg/resource"
 )
 
-// Apply Installs the quickstart in the namespace provided
-func Apply(clientFactory factory.Factory, path string) error {
-	errs := []error{}
+// Manifest Installs the quickstart in the namespace provided
+func Manifest(clientFactory factory.Factory, path string) error {
 	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
-	cfg, err := k8sCntMgr.GetConfigFlags()
+	infos, err := k8sCntMgr.GetObjectsFromPath(path)
 	if err != nil {
 		return err
 	}
-	infos, err := k8sCntMgr.GetObjectsFromPath(path)
+	return Resources(clientFactory, infos)
+}
+
+// Resources applies the resources provided
+func Resources(clientFactory factory.Factory, infos []*resource.Info) error {
+	errs := []error{}
+	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
+	cfg, err := k8sCntMgr.GetConfigFlags()
 	if err != nil {
 		return err
 	}

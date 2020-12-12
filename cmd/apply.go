@@ -50,7 +50,29 @@ var secretAgent = &cobra.Command{
       # Install a specific version of the secret-agent.
       forgeops apply sa -t v0.2.1`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := apply.SecretAgent(clientFactory, tag)
+		err := apply.GHResource(clientFactory, "ForgeRock/secret-agent", "secret-agent.yaml", tag)
+		return err
+	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
+}
+
+var dsOperator = &cobra.Command{
+	Use:     "ds",
+	Aliases: []string{"ds-operator"},
+	Short:   "Installs the ForgeRock ds-operator",
+	Long: `
+    Installs the ForgeRock ds-operator:
+    * Applies the latest ds-operator manifest
+    * use --tag to specify a specific ds-operator version to install`,
+	Example: `
+      # Install the "latest" ds-operator.
+      forgeops apply ds
+
+      # Install a specific version of the ds-operator.
+      forgeops apply ds -t v0.0.4`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		err := apply.GHResource(clientFactory, "ForgeRock/ds-operator", "ds-operator.yaml", tag)
 		return err
 	},
 	SilenceUsage:      true,
@@ -80,6 +102,7 @@ func init() {
 
 	applyCmd.AddCommand(quickstart)
 	applyCmd.AddCommand(secretAgent)
+	applyCmd.AddCommand(dsOperator)
 
 	rootCmd.AddCommand(applyCmd)
 }

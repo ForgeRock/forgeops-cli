@@ -1,14 +1,36 @@
-## forgeops apply
+## forgeops apply ds
 
-Install common platform components
+Installs the ForgeRock ds-operator
 
 ### Synopsis
 
 
-	Apply common platform components
-    
+    Installs the ForgeRock ds-operator:
+    * Applies the latest ds-operator manifest
+    * use --tag to specify a specific ds-operator version to install
+
+```
+forgeops apply ds [flags]
+```
+
+### Examples
+
+```
+
+      # Install the "latest" ds-operator.
+      forgeops apply ds
+
+      # Install a specific version of the ds-operator.
+      forgeops apply ds -t v0.0.4
+```
 
 ### Options
+
+```
+  -h, --help   help for ds
+```
+
+### Options inherited from parent commands
 
 ```
       --as string                      Username to impersonate for the operation
@@ -19,7 +41,6 @@ Install common platform components
       --client-key string              Path to a client key file for TLS
       --cluster string                 The name of the kubeconfig cluster to use
       --context string                 The name of the kubeconfig context to use
-  -h, --help                           help for apply
       --insecure-skip-tls-verify       If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure
       --kubeconfig string              Path to the kubeconfig file to use for CLI requests.
   -n, --namespace string               If present, the namespace scope for this CLI request
@@ -35,8 +56,5 @@ Install common platform components
 
 ### SEE ALSO
 
-* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock platform deployments
-* [forgeops apply ds](forgeops_apply_ds.md)	 - Installs the ForgeRock ds-operator
-* [forgeops apply quickstart](forgeops_apply_quickstart.md)	 - Installs the ForgeRock Cloud Deployment Quickstart (CDQ)
-* [forgeops apply sa](forgeops_apply_sa.md)	 - Installs the ForgeRock secret-agent
+* [forgeops apply](forgeops_apply.md)	 - Install common platform components
 
