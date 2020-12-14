@@ -29,6 +29,7 @@ func NewK8sClientMgr(f factory.Factory) ClientMgr {
 // ClientMgr a container for creating kubernetes rest clients
 type ClientMgr interface {
 	factory.Factory
+	Namespace() (string, error)
 	GetObjectsFromPath(path string) ([]*resource.Info, error)
 	GetObjectsFromServer(resourceType, name string) ([]*resource.Info, error)
 	ApplyObject(info *resource.Info) error
@@ -50,10 +51,20 @@ type NullSchema struct{}
 // ValidateBytes never fails for NullSchema.
 func (NullSchema) ValidateBytes(data []byte) error { return nil }
 
+func (cmgr clientMgr) Namespace() (string, error) {
+	cfg, err := cmgr.GetOverrideFlags()
+	if err != nil {
+		return "", err
+	}
+	// If no ns is provided in the flags, use the default kubeconfig value.
+	ns, _, err := cfg.ToRawKubeConfigLoader().Namespace()
+	return ns, nil
+}
+
 // GetObjectsFromPath Obtains objects from filepath or url
 func (cmgr clientMgr) GetObjectsFromPath(path string) ([]*resource.Info, error) {
 	usage := "contains the manifest to process"
-	cfg, err := cmgr.GetConfigFlags()
+	cfg, err := cmgr.GetOverrideFlags()
 	if err != nil {
 		return nil, err
 	}
@@ -72,8 +83,8 @@ func (cmgr clientMgr) GetObjectsFromPath(path string) ([]*resource.Info, error) 
 		Unstructured().
 		Schema(NullSchema{}).
 		ContinueOnError().
+		// Use cfg.Namespace in case there's an override. Otherwise default to the ns in the manifest
 		NamespaceParam(*cfg.Namespace).DefaultNamespace().
-		// FilenameParam(len(*cfg.Namespace) > 0, &fileNameOpts).
 		FilenameParam(false, &fileNameOpts).
 		Flatten().
 		Do()
@@ -81,10 +92,10 @@ func (cmgr clientMgr) GetObjectsFromPath(path string) ([]*resource.Info, error) 
 	return objects, err
 }
 
-// GetObjectsFromPath Obtains objects from the k8s server
+// GetObjectsFromServer Obtains objects from the k8s server
 // if no name is provided, this function will return all objects of the given type
 func (cmgr clientMgr) GetObjectsFromServer(resourceType, name string) ([]*resource.Info, error) {
-	cfg, err := cmgr.GetConfigFlags()
+	ns, err := cmgr.Namespace()
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +109,7 @@ func (cmgr clientMgr) GetObjectsFromServer(resourceType, name string) ([]*resour
 	r := builder.
 		Unstructured().
 		ContinueOnError().
-		NamespaceParam(*cfg.Namespace).DefaultNamespace().
+		NamespaceParam(ns).DefaultNamespace().
 		SelectAllParam(selectAll).
 		FieldSelectorParam(nameSelector).
 		SingleResourceType().

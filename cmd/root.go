@@ -15,6 +15,7 @@ import (
 var cfgFile string
 var clientFactory factory.Factory
 var tag string
+var skipUserConfirmation bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

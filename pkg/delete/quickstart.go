@@ -20,13 +20,11 @@ func Quickstart(clientFactory factory.Factory, version string, skipUserQ bool) e
 		fPath = fmt.Sprintf("https://github.com/ForgeRock/forgeops/releases/download/%s/quickstart.yaml", version)
 	}
 	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
-	cfg, err := k8sCntMgr.GetConfigFlags()
+	ns, err := k8sCntMgr.Namespace()
 	if err != nil {
 		return err
 	}
-	if len(*cfg.Namespace) != 0 {
-		printer.NoticeHif("Targetting namespace: %q", *cfg.Namespace)
-	}
+	printer.NoticeHif("Targeting namespace: %q", ns)
 
 	// Delete the quickstart resources listed in the manifest
 	if err := Manifest(clientFactory, fPath, skipUserQ); err != nil {

@@ -30,7 +30,7 @@ func Manifest(clientFactory factory.Factory, path string, skipUserQ bool) error 
 func Resources(clientFactory factory.Factory, infos []*resource.Info, skipUserQ bool) error {
 	errs := []error{}
 	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
-	cfg, err := k8sCntMgr.GetConfigFlags()
+	cfg, err := k8sCntMgr.GetOverrideFlags()
 	if err != nil {
 		return err
 	}

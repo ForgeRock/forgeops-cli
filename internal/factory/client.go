@@ -23,7 +23,7 @@ type Factory interface {
 	StaticClient() (*kubernetes.Clientset, error)
 	DynamicClient() (dynamic.Interface, error)
 	RestConfig() (*rest.Config, error)
-	GetConfigFlags() (*genericclioptions.ConfigFlags, error)
+	GetOverrideFlags() (*genericclioptions.ConfigFlags, error)
 	Builder() *resource.Builder
 }
 
@@ -31,8 +31,8 @@ type factory struct {
 	kubeConfigFlags *genericclioptions.ConfigFlags
 }
 
-// GetConfigFlags returns the command flags
-func (f *factory) GetConfigFlags() (*genericclioptions.ConfigFlags, error) {
+// GetOverrideFlags returns the command flags
+func (f *factory) GetOverrideFlags() (*genericclioptions.ConfigFlags, error) {
 	return f.kubeConfigFlags, nil
 }
 

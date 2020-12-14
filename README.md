@@ -10,7 +10,7 @@ Running it then should be as simple as:
 
 ```console
 $ make
-$ ./bin/forgeops-cli
+$ ./bin/forgeops
 ```
 
 ### Testing

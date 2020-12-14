@@ -9,7 +9,6 @@ import (
 
 // cmd globals config
 var deleteFlags *genericclioptions.ConfigFlags
-var skipUserDelQ bool
 
 var deleteQuickstart = &cobra.Command{
 	Use:     "quickstart",
@@ -25,7 +24,7 @@ var deleteQuickstart = &cobra.Command{
     # Delete the CDQ from a given namespace.
     forgeops delete quickstart -n mynamespace`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := delete.Quickstart(clientFactory, tag, skipUserDelQ)
+		err := delete.Quickstart(clientFactory, tag, skipUserConfirmation)
 		return err
 	},
 	SilenceUsage:      true,
@@ -37,7 +36,7 @@ var deleteSecretAgent = &cobra.Command{
 	Aliases: []string{"secret-agent"},
 	Short:   "Uninstalls the ForgeRock secret-agent",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := delete.GHResource(clientFactory, "ForgeRock/secret-agent", "secret-agent.yaml", tag, true, skipUserDelQ)
+		err := delete.GHResource(clientFactory, "ForgeRock/secret-agent", "secret-agent.yaml", tag, true, skipUserConfirmation)
 		return err
 	},
 	// Hide this command from help docs
@@ -51,7 +50,7 @@ var deleteDsOperator = &cobra.Command{
 	Aliases: []string{"ds-operator"},
 	Short:   "Uninstalls the ForgeRock ds-operator",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := delete.GHResource(clientFactory, "ForgeRock/ds-operator", "ds-operator.yaml", tag, true, skipUserDelQ)
+		err := delete.GHResource(clientFactory, "ForgeRock/ds-operator", "ds-operator.yaml", tag, true, skipUserConfirmation)
 		return err
 	},
 	// Hide this command from help docs
@@ -79,7 +78,7 @@ func init() {
 
 	// Delete command-specific flags
 	deleteCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "", "Tag/version to parse for delete")
-	deleteCmd.PersistentFlags().BoolVarP(&skipUserDelQ, "yes", "y", false, "Do not prompt for confirmation")
+	deleteCmd.PersistentFlags().BoolVarP(&skipUserConfirmation, "yes", "y", false, "Do not prompt for confirmation")
 
 	deleteCmd.AddCommand(deleteQuickstart)
 	deleteCmd.AddCommand(deleteSecretAgent)

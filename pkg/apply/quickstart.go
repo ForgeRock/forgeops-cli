@@ -41,10 +41,15 @@ func Quickstart(clientFactory factory.Factory, version string) error {
 			printName:  []string{"uid=admin user"},
 		},
 	}
-
+	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
+	ns, err := k8sCntMgr.Namespace()
+	if err != nil {
+		return err
+	}
 	if err := checkDependencies(); err != nil {
 		return err
 	}
+	printer.NoticeHif("Targeting namespace: %q", ns)
 	printer.NoticeHif("Installing CDQ version: %q", version)
 	if err := Manifest(clientFactory, quickstartPath); err != nil {
 		return err
@@ -78,12 +83,12 @@ func waitForSecrets(clientFactory factory.Factory, importantSecrets []qsSecret) 
 		Resource: "secrets",
 	}
 	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
-	cfg, err := k8sCntMgr.GetConfigFlags()
+	ns, err := k8sCntMgr.Namespace()
 	if err != nil {
 		return err
 	}
 	for _, secret := range importantSecrets {
-		if _, err := k8sCntMgr.WaitForResource(30, *cfg.Namespace, secret.secretName, gvr); err != nil {
+		if _, err := k8sCntMgr.WaitForResource(30, ns, secret.secretName, gvr); err != nil {
 			return err
 		}
 	}
@@ -93,7 +98,7 @@ func waitForSecrets(clientFactory factory.Factory, importantSecrets []qsSecret) 
 func printSecret(clientFactory factory.Factory, importantSecrets []qsSecret) error {
 	ctx := context.Background()
 	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
-	cfg, err := k8sCntMgr.GetConfigFlags()
+	ns, err := k8sCntMgr.Namespace()
 	if err != nil {
 		return err
 	}
@@ -102,7 +107,7 @@ func printSecret(clientFactory factory.Factory, importantSecrets []qsSecret) err
 		return err
 	}
 	for _, s := range importantSecrets {
-		k8sSecret, err := sclient.CoreV1().Secrets(*cfg.Namespace).Get(ctx, s.secretName, metav1.GetOptions{})
+		k8sSecret, err := sclient.CoreV1().Secrets(ns).Get(ctx, s.secretName, metav1.GetOptions{})
 		if err != nil {
 			return err
 		}
@@ -115,11 +120,11 @@ func printSecret(clientFactory factory.Factory, importantSecrets []qsSecret) err
 
 func printURLs(clientFactory factory.Factory) error {
 	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
-	cfg, err := k8sCntMgr.GetConfigFlags()
+	ns, err := k8sCntMgr.Namespace()
 	if err != nil {
 		return err
 	}
-	fqdn := fmt.Sprintf("https://%s.iam.example.com/", *cfg.Namespace)
+	fqdn := fmt.Sprintf("https://%s.iam.example.com/", ns)
 	printer.Noticef("Relevant URLs:")
 	printer.NoticeHif(fqdn + "platform")
 	printer.NoticeHif(fqdn + "admin")
