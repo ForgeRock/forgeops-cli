@@ -1,13 +1,13 @@
 ## forgeops apply quickstart
 
-Installs the ForgeRock Cloud Deployment Quickstart (CDQ)
+Deploy the ForgeRock Cloud Deployment Quickstart (CDQ)
 
 ### Synopsis
 
 
-    Installs the ForgeRock Cloud Deployment Quickstart (CDQ):
-    * Applies the latest quickstart manifest
-    * use --tag to specify a specific CDQ version to install
+    Deploy the ForgeRock Cloud Deployment Quickstart (CDQ):
+    * Apply the latest quickstart manifest
+    * use --tag to specify a different CDQ version to deploy
 
 ```
 forgeops apply quickstart [flags]
@@ -17,14 +17,14 @@ forgeops apply quickstart [flags]
 
 ```
 
-      # Install the "latest" CDQ in the "default" namespace.
+      # Deploy the "latest" CDQ in the "default" namespace.
       forgeops apply quickstart
     
-      # Install the CDQ in the "default" namespace.
-      forgeops apply quickstart -t 2020.10.28-AlSugoDiNoci
+      # Deploy the CDQ in the "default" namespace.
+      forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci
       
-      # Install the CDQ in a different namespace.
-      forgeops apply quickstart -t 2020.10.28-AlSugoDiNoci -n mynamespace
+      # Deploy the CDQ in a given namespace.
+      forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace
 ```
 
 ### Options
@@ -50,7 +50,7 @@ forgeops apply quickstart [flags]
       --password string                Password for basic authentication to the API server
       --request-timeout string         The length of time to wait before giving up on a single server request. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means don't timeout requests. (default "0")
   -s, --server string                  The address and port of the Kubernetes API server
-  -t, --tag string                     Tag/version to apply
+  -t, --tag string                     Release tag  of the component to be deployed
       --tls-server-name string         Server name to use for server certificate validation. If it is not provided, the hostname used to contact the server is used
       --token string                   Bearer token for authentication to the API server
       --user string                    The name of the kubeconfig user to use
@@ -59,5 +59,5 @@ forgeops apply quickstart [flags]
 
 ### SEE ALSO
 
-* [forgeops apply](forgeops_apply.md)	 - Install common platform components
+* [forgeops apply](forgeops_apply.md)	 - Deploy common platform components
 

@@ -13,16 +13,17 @@ var deleteFlags *genericclioptions.ConfigFlags
 var deleteQuickstart = &cobra.Command{
 	Use:     "quickstart",
 	Aliases: []string{"qs"},
-	Short:   "Uninstalls the ForgeRock Cloud Deployment Quickstart (CDQ)",
+	Short:   "Remove the ForgeRock Cloud Deployment Quickstart (CDQ)",
 	Long: `
-    Uninstalls the ForgeRock Cloud Deployment Quickstart (CDQ):
-    * Deletes the quickstart deployment`,
+    Remove the ForgeRock Cloud Deployment Quickstart (CDQ):
+    * Delete the quickstart deployment
+    * Delete all the persistent volumes requested by the CDQ`,
 	Example: `
     # Delete the CDQ from the "default" namespace.
     forgeops delete quickstart
     
     # Delete the CDQ from a given namespace.
-    forgeops delete quickstart -n mynamespace`,
+    forgeops delete quickstart --namespace mynamespace`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := delete.Quickstart(clientFactory, tag, skipUserConfirmation)
 		return err
@@ -32,15 +33,19 @@ var deleteQuickstart = &cobra.Command{
 }
 
 var deleteSecretAgent = &cobra.Command{
-	Use:     "sa",
-	Aliases: []string{"secret-agent"},
-	Short:   "Uninstalls the ForgeRock secret-agent",
+	Use:     "secret-agent",
+	Aliases: []string{"sa"},
+	Short:   "Remove the ForgeRock Secret Agent",
+	Long: `
+    Remove the ForgeRock secret-agent:
+    * Delete the secret-agent deployment`,
+	Example: `
+    # Delete the secret-agent from the cluster.
+    forgeops delete secret-agent`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := delete.GHResource(clientFactory, "ForgeRock/secret-agent", "secret-agent.yaml", tag, true, skipUserConfirmation)
 		return err
 	},
-	// Hide this command from help docs
-	Hidden:            true,
 	SilenceUsage:      true,
 	DisableAutoGenTag: true,
 }
@@ -48,22 +53,35 @@ var deleteSecretAgent = &cobra.Command{
 var deleteDsOperator = &cobra.Command{
 	Use:     "ds",
 	Aliases: []string{"ds-operator"},
-	Short:   "Uninstalls the ForgeRock ds-operator",
+	Short:   "Remove the ForgeRock DS operator",
+	Long: `
+    Remove the ForgeRock ds-operator:
+    * Delete the ds-operator deployment`,
+	Example: `
+    # Delete the ds-operator from the cluster.
+    forgeops delete ds`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := delete.GHResource(clientFactory, "ForgeRock/ds-operator", "ds-operator.yaml", tag, true, skipUserConfirmation)
 		return err
 	},
-	// Hide this command from help docs
-	Hidden:            true,
 	SilenceUsage:      true,
 	DisableAutoGenTag: true,
 }
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Uninstalls common platform components",
+	Short: "Remove common platform components",
 	Long: `
-	Uninstalls common platform components`,
+    Remove common platform components`,
+	Example: `
+    # Delete the CDQ from the "default" namespace.
+    forgeops delete quickstart
+    
+    # Delete the CDQ from a given namespace.
+    forgeops delete quickstart --namespace mynamespace
+    
+    # Delete the secret-agent from the cluster.
+    forgeops delete secret-agent`,
 	// Configure Client Mgr for all subcommands
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		clientFactory = factory.NewFactory(deleteFlags)
@@ -77,7 +95,7 @@ func init() {
 	deleteFlags = initK8sFlags(deleteCmd.PersistentFlags())
 
 	// Delete command-specific flags
-	deleteCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "", "Tag/version to parse for delete")
+	deleteCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "", "Release tag  of the component to be deployed")
 	deleteCmd.PersistentFlags().BoolVarP(&skipUserConfirmation, "yes", "y", false, "Do not prompt for confirmation")
 
 	deleteCmd.AddCommand(deleteQuickstart)

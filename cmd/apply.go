@@ -13,20 +13,20 @@ var applyFlags *genericclioptions.ConfigFlags
 var quickstart = &cobra.Command{
 	Use:     "quickstart",
 	Aliases: []string{"qs"},
-	Short:   "Installs the ForgeRock Cloud Deployment Quickstart (CDQ)",
+	Short:   "Deploy the ForgeRock Cloud Deployment Quickstart (CDQ)",
 	Long: `
-    Installs the ForgeRock Cloud Deployment Quickstart (CDQ):
-    * Applies the latest quickstart manifest
-    * use --tag to specify a specific CDQ version to install`,
+    Deploy the ForgeRock Cloud Deployment Quickstart (CDQ):
+    * Apply the latest quickstart manifest
+    * use --tag to specify a different CDQ version to deploy`,
 	Example: `
-      # Install the "latest" CDQ in the "default" namespace.
+      # Deploy the "latest" CDQ in the "default" namespace.
       forgeops apply quickstart
     
-      # Install the CDQ in the "default" namespace.
-      forgeops apply quickstart -t 2020.10.28-AlSugoDiNoci
+      # Deploy the CDQ in the "default" namespace.
+      forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci
       
-      # Install the CDQ in a different namespace.
-      forgeops apply quickstart -t 2020.10.28-AlSugoDiNoci -n mynamespace`,
+      # Deploy the CDQ in a given namespace.
+      forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := apply.Quickstart(clientFactory, tag)
 		return err
@@ -36,19 +36,19 @@ var quickstart = &cobra.Command{
 }
 
 var secretAgent = &cobra.Command{
-	Use:     "sa",
-	Aliases: []string{"secret-agent"},
-	Short:   "Installs the ForgeRock secret-agent",
+	Use:     "secret-agent",
+	Aliases: []string{"sa"},
+	Short:   "Deploy the ForgeRock Secret Agent",
 	Long: `
-    Installs the ForgeRock secret-agent:
-    * Applies the latest secret-agent manifest
-    * use --tag to specify a specific secret-agent version to install`,
+    Deploy the ForgeRock secret-agent:
+    * Apply the latest secret-agent manifest
+    * use --tag to specify a different secret-agent version to deploy`,
 	Example: `
-      # Install the "latest" secret-agent.
+      # Deploy the "latest" secret-agent.
       forgeops apply sa
 
-      # Install a specific version of the secret-agent.
-      forgeops apply sa -t v0.2.1`,
+      # Deploy a specific version of the secret-agent.
+      forgeops apply sa --tag v0.2.1`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := apply.GHResource(clientFactory, "ForgeRock/secret-agent", "secret-agent.yaml", tag)
 		return err
@@ -60,17 +60,17 @@ var secretAgent = &cobra.Command{
 var dsOperator = &cobra.Command{
 	Use:     "ds",
 	Aliases: []string{"ds-operator"},
-	Short:   "Installs the ForgeRock ds-operator",
+	Short:   "Deploy the ForgeRock DS operator",
 	Long: `
-    Installs the ForgeRock ds-operator:
-    * Applies the latest ds-operator manifest
-    * use --tag to specify a specific ds-operator version to install`,
+    Deploy the ForgeRock ds-operator:
+    * Apply the latest ds-operator manifest
+    * use --tag to specify a different ds-operator version to deploy`,
 	Example: `
-      # Install the "latest" ds-operator.
+      # Deploy the "latest" ds-operator.
       forgeops apply ds
 
-      # Install a specific version of the ds-operator.
-      forgeops apply ds -t v0.0.4`,
+      # Deploy a specific version of the ds-operator.
+      forgeops apply ds --tag v0.0.4`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := apply.GHResource(clientFactory, "ForgeRock/ds-operator", "ds-operator.yaml", tag)
 		return err
@@ -81,10 +81,18 @@ var dsOperator = &cobra.Command{
 
 var applyCmd = &cobra.Command{
 	Use:   "apply",
-	Short: "Install common platform components",
+	Short: "Deploy common platform components",
 	Long: `
-	Apply common platform components
-    `,
+	Deploy common platform components`,
+	Example: `
+    # Deploy the "latest" ds-operator.
+    forgeops apply ds
+
+    # Deploy the "latest" secret-agent.
+    forgeops apply sa
+
+    # Deploy the CDQ in a given namespace.
+    forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace`,
 	// Configure Client Mgr for all subcommands
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		clientFactory = factory.NewFactory(applyFlags)
@@ -98,7 +106,7 @@ func init() {
 	applyFlags = initK8sFlags(applyCmd.PersistentFlags())
 
 	// Apply command-specific flags
-	applyCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "", "Tag/version to apply")
+	applyCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "", "Release tag  of the component to be deployed")
 
 	applyCmd.AddCommand(quickstart)
 	applyCmd.AddCommand(secretAgent)

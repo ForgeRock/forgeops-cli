@@ -34,6 +34,6 @@ Diagnose common cluster and platform deployments
 ### SEE ALSO
 
 * [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock platform deployments
-* [forgeops doctor operator](forgeops_doctor_operator.md)	 - Check Operators Installed and Running
+* [forgeops doctor operator](forgeops_doctor_operator.md)	 - Verify that operators are installed and ready
 * [forgeops doctor platform](forgeops_doctor_platform.md)	 - Check the status of platform deployment
 

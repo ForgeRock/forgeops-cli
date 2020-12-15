@@ -1,12 +1,25 @@
 ## forgeops apply
 
-Install common platform components
+Deploy common platform components
 
 ### Synopsis
 
 
-	Apply common platform components
-    
+	Deploy common platform components
+
+### Examples
+
+```
+
+    # Deploy the "latest" ds-operator.
+    forgeops apply ds
+
+    # Deploy the "latest" secret-agent.
+    forgeops apply sa
+
+    # Deploy the CDQ in a given namespace.
+    forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace
+```
 
 ### Options
 
@@ -26,7 +39,7 @@ Install common platform components
       --password string                Password for basic authentication to the API server
       --request-timeout string         The length of time to wait before giving up on a single server request. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means don't timeout requests. (default "0")
   -s, --server string                  The address and port of the Kubernetes API server
-  -t, --tag string                     Tag/version to apply
+  -t, --tag string                     Release tag  of the component to be deployed
       --tls-server-name string         Server name to use for server certificate validation. If it is not provided, the hostname used to contact the server is used
       --token string                   Bearer token for authentication to the API server
       --user string                    The name of the kubeconfig user to use
@@ -36,7 +49,7 @@ Install common platform components
 ### SEE ALSO
 
 * [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock platform deployments
-* [forgeops apply ds](forgeops_apply_ds.md)	 - Installs the ForgeRock ds-operator
-* [forgeops apply quickstart](forgeops_apply_quickstart.md)	 - Installs the ForgeRock Cloud Deployment Quickstart (CDQ)
-* [forgeops apply sa](forgeops_apply_sa.md)	 - Installs the ForgeRock secret-agent
+* [forgeops apply ds](forgeops_apply_ds.md)	 - Deploy the ForgeRock DS operator
+* [forgeops apply quickstart](forgeops_apply_quickstart.md)	 - Deploy the ForgeRock Cloud Deployment Quickstart (CDQ)
+* [forgeops apply secret-agent](forgeops_apply_secret-agent.md)	 - Deploy the ForgeRock Secret Agent
 

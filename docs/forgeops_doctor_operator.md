@@ -1,13 +1,14 @@
 ## forgeops doctor operator
 
-Check Operators Installed and Running
+Verify that operators are installed and ready
 
 ### Synopsis
 
 
-	Checks to ensure that required operators are installed and ready.
-	Searches all namespaces for the default deployment of secret agent, nginx-ingress, cert-manager
-	Checks for a minimum ready count of one.
+    Verify that operators are installed and running:
+	* Checks to ensure that required operators are installed and ready.
+	* Searches all namespaces for the default deployment of secret agent, nginx-ingress, cert-manager.
+	* Checks for a minimum ready count of one.
 
 ```
 forgeops doctor operator [flags]

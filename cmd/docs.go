@@ -12,7 +12,7 @@ var outputDir string
 
 var docsCmd = &cobra.Command{
 	Use:   "docs",
-	Short: "Generates docs",
+	Short: "Generate docs",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmdTree := cmd.Parent()
 		os.Mkdir(outputDir, 0755)

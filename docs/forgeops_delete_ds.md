@@ -1,27 +1,32 @@
-## forgeops delete
+## forgeops delete ds
 
-Remove common platform components
+Remove the ForgeRock DS operator
 
 ### Synopsis
 
 
-    Remove common platform components
+    Remove the ForgeRock ds-operator:
+    * Delete the ds-operator deployment
+
+```
+forgeops delete ds [flags]
+```
 
 ### Examples
 
 ```
 
-    # Delete the CDQ from the "default" namespace.
-    forgeops delete quickstart
-    
-    # Delete the CDQ from a given namespace.
-    forgeops delete quickstart --namespace mynamespace
-    
-    # Delete the secret-agent from the cluster.
-    forgeops delete secret-agent
+    # Delete the ds-operator from the cluster.
+    forgeops delete ds
 ```
 
 ### Options
+
+```
+  -h, --help   help for ds
+```
+
+### Options inherited from parent commands
 
 ```
       --as string                      Username to impersonate for the operation
@@ -32,7 +37,6 @@ Remove common platform components
       --client-key string              Path to a client key file for TLS
       --cluster string                 The name of the kubeconfig cluster to use
       --context string                 The name of the kubeconfig context to use
-  -h, --help                           help for delete
       --insecure-skip-tls-verify       If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure
       --kubeconfig string              Path to the kubeconfig file to use for CLI requests.
   -n, --namespace string               If present, the namespace scope for this CLI request
@@ -49,8 +53,5 @@ Remove common platform components
 
 ### SEE ALSO
 
-* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock platform deployments
-* [forgeops delete ds](forgeops_delete_ds.md)	 - Remove the ForgeRock DS operator
-* [forgeops delete quickstart](forgeops_delete_quickstart.md)	 - Remove the ForgeRock Cloud Deployment Quickstart (CDQ)
-* [forgeops delete secret-agent](forgeops_delete_secret-agent.md)	 - Remove the ForgeRock Secret Agent
+* [forgeops delete](forgeops_delete.md)	 - Remove common platform components
 

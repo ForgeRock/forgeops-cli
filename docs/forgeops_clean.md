@@ -1,11 +1,11 @@
 ## forgeops clean
 
-Removes any remaining forgeops components from the given namespace
+Remove any remaining ForgeRock components from the given namespace
 
 ### Synopsis
 
 
-    Removes any remaining forgeops components from the given namespace
+    Remove any remaining ForgeRock components from the given namespace
 
 ```
 forgeops clean [flags]

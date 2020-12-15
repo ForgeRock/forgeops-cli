@@ -1,6 +1,6 @@
 ## forgeops docs
 
-Generates docs
+Generate docs
 
 ```
 forgeops docs [flags]

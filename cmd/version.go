@@ -10,8 +10,10 @@ import (
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Print the version number of ForgeOps CLI tool",
-	Long:  `Please provide the output of this command when reporting issues.`,
+	Short: "Print the build information",
+	Long: `
+    Print the build information.
+    Please provide the output of this command when reporting issues.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Build Date:", version.BuildDate)
 		fmt.Println("Git Commit:", version.GitCommit)

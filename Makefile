@@ -10,7 +10,7 @@ IMAGE_NAME := "forgerock/forgeops-cli"
 
 PR_VERSION_NAME = ${VERSION}-pr.${PR_NUMBER}
 
-all: build
+all: build docs
 
 pr-tag:
 	git tag "$(PR_VERSION_NAME)"

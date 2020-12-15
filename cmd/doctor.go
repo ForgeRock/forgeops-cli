@@ -42,6 +42,7 @@ var platform = &cobra.Command{
 	Use:     "platform",
 	Short:   "Check the status of platform deployment",
 	Aliases: []string{"ds"},
+	// TODO Fix Long: see issue #34:
 	Long: `
 	Check the status of platform deployment by checking ready state and configuration.
 		* check secrets deployed - should we check for backups?
@@ -67,11 +68,12 @@ var ignoreOperators []string
 var operators = &cobra.Command{
 	Use:     "operator",
 	Aliases: []string{"op"},
-	Short:   "Check Operators Installed and Running",
+	Short:   "Verify that operators are installed and ready",
 	Long: `
-	Checks to ensure that required operators are installed and ready.
-	Searches all namespaces for the default deployment of secret agent, nginx-ingress, cert-manager
-	Checks for a minimum ready count of one.`,
+    Verify that operators are installed and running:
+	* Checks to ensure that required operators are installed and ready.
+	* Searches all namespaces for the default deployment of secret agent, nginx-ingress, cert-manager.
+	* Checks for a minimum ready count of one.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := clientFactory.StaticClient()
 		if err != nil {

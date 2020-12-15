@@ -1,10 +1,12 @@
 ## forgeops version
 
-Print the version number of ForgeOps CLI tool
+Print the build information
 
 ### Synopsis
 
-Please provide the output of this command when reporting issues.
+
+    Print the build information.
+    Please provide the output of this command when reporting issues.
 
 ```
 forgeops version [flags]

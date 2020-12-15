@@ -1,12 +1,13 @@
 ## forgeops delete quickstart
 
-Uninstalls the ForgeRock Cloud Deployment Quickstart (CDQ)
+Remove the ForgeRock Cloud Deployment Quickstart (CDQ)
 
 ### Synopsis
 
 
-    Uninstalls the ForgeRock Cloud Deployment Quickstart (CDQ):
-    * Deletes the quickstart deployment
+    Remove the ForgeRock Cloud Deployment Quickstart (CDQ):
+    * Delete the quickstart deployment
+    * Delete all the persistent volumes requested by the CDQ
 
 ```
 forgeops delete quickstart [flags]
@@ -20,7 +21,7 @@ forgeops delete quickstart [flags]
     forgeops delete quickstart
     
     # Delete the CDQ from a given namespace.
-    forgeops delete quickstart -n mynamespace
+    forgeops delete quickstart --namespace mynamespace
 ```
 
 ### Options
@@ -46,7 +47,7 @@ forgeops delete quickstart [flags]
       --password string                Password for basic authentication to the API server
       --request-timeout string         The length of time to wait before giving up on a single server request. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means don't timeout requests. (default "0")
   -s, --server string                  The address and port of the Kubernetes API server
-  -t, --tag string                     Tag/version to parse for delete
+  -t, --tag string                     Release tag  of the component to be deployed
       --tls-server-name string         Server name to use for server certificate validation. If it is not provided, the hostname used to contact the server is used
       --token string                   Bearer token for authentication to the API server
       --user string                    The name of the kubeconfig user to use
@@ -56,5 +57,5 @@ forgeops delete quickstart [flags]
 
 ### SEE ALSO
 
-* [forgeops delete](forgeops_delete.md)	 - Uninstalls common platform components
+* [forgeops delete](forgeops_delete.md)	 - Remove common platform components
 

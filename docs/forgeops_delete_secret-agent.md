@@ -1,33 +1,29 @@
-## forgeops apply sa
+## forgeops delete secret-agent
 
-Installs the ForgeRock secret-agent
+Remove the ForgeRock Secret Agent
 
 ### Synopsis
 
 
-    Installs the ForgeRock secret-agent:
-    * Applies the latest secret-agent manifest
-    * use --tag to specify a specific secret-agent version to install
+    Remove the ForgeRock secret-agent:
+    * Delete the secret-agent deployment
 
 ```
-forgeops apply sa [flags]
+forgeops delete secret-agent [flags]
 ```
 
 ### Examples
 
 ```
 
-      # Install the "latest" secret-agent.
-      forgeops apply sa
-
-      # Install a specific version of the secret-agent.
-      forgeops apply sa -t v0.2.1
+    # Delete the secret-agent from the cluster.
+    forgeops delete secret-agent
 ```
 
 ### Options
 
 ```
-  -h, --help   help for sa
+  -h, --help   help for secret-agent
 ```
 
 ### Options inherited from parent commands
@@ -47,14 +43,15 @@ forgeops apply sa [flags]
       --password string                Password for basic authentication to the API server
       --request-timeout string         The length of time to wait before giving up on a single server request. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means don't timeout requests. (default "0")
   -s, --server string                  The address and port of the Kubernetes API server
-  -t, --tag string                     Tag/version to apply
+  -t, --tag string                     Release tag  of the component to be deployed
       --tls-server-name string         Server name to use for server certificate validation. If it is not provided, the hostname used to contact the server is used
       --token string                   Bearer token for authentication to the API server
       --user string                    The name of the kubeconfig user to use
       --username string                Username for basic authentication to the API server
+  -y, --yes                            Do not prompt for confirmation
 ```
 
 ### SEE ALSO
 
-* [forgeops apply](forgeops_apply.md)	 - Install common platform components
+* [forgeops delete](forgeops_delete.md)	 - Remove common platform components
 
