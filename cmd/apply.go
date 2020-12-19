@@ -9,6 +9,7 @@ import (
 
 // cmd globals config
 var applyFlags *genericclioptions.ConfigFlags
+var fqdn string
 
 var quickstart = &cobra.Command{
 	Use:     "quickstart",
@@ -26,9 +27,12 @@ var quickstart = &cobra.Command{
       forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci
       
       # Deploy the CDQ in a given namespace.
-      forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace`,
+      forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace
+      
+      # Deploy the CDQ with a custom FQDN.
+      forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace --fqdn demo.customdomain.com`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := apply.Quickstart(clientFactory, tag)
+		err := apply.Quickstart(clientFactory, tag, fqdn)
 		return err
 	},
 	SilenceUsage:      true,
@@ -92,7 +96,10 @@ var applyCmd = &cobra.Command{
     forgeops apply sa
 
     # Deploy the CDQ in a given namespace.
-    forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace`,
+    forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace
+    
+    # Deploy the CDQ with a custom FQDN.
+    forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace --fqdn demo.customdomain.com`,
 	// Configure Client Mgr for all subcommands
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		clientFactory = factory.NewFactory(applyFlags)
@@ -106,7 +113,8 @@ func init() {
 	applyFlags = initK8sFlags(applyCmd.PersistentFlags())
 
 	// Apply command-specific flags
-	applyCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "", "Release tag  of the component to be deployed")
+	applyCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "", "Release tag  of the component to be deployed (default \"latest\")")
+	quickstart.PersistentFlags().StringVar(&fqdn, "fqdn", "", "FQDN for CDQ deployment. (default \"[NAMESPACE].iam.example.com\")")
 
 	applyCmd.AddCommand(quickstart)
 	applyCmd.AddCommand(secretAgent)
