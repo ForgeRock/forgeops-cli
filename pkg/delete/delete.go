@@ -16,10 +16,20 @@ import (
 
 var errDidNotAccept = errors.New("Did not accept prompt to delete")
 
-// Manifest Deletes the resources listed in the manifest provided
+// Manifest obtains the manifest from the given path or URL and deletes the resources listed
 func Manifest(clientFactory factory.Factory, path string, skipUserQ bool) error {
 	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
 	infos, err := k8sCntMgr.GetObjectsFromPath(path)
+	if err != nil {
+		return err
+	}
+	return Resources(clientFactory, infos, skipUserQ)
+}
+
+// ManifestStr Deletes the resources listed in the given manifest provided
+func ManifestStr(clientFactory factory.Factory, manifestContents string, skipUserQ bool) error {
+	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
+	infos, err := k8sCntMgr.GetObjectsFromStream(strings.NewReader(manifestContents))
 	if err != nil {
 		return err
 	}
@@ -30,10 +40,6 @@ func Manifest(clientFactory factory.Factory, path string, skipUserQ bool) error 
 func Resources(clientFactory factory.Factory, infos []*resource.Info, skipUserQ bool) error {
 	errs := []error{}
 	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
-	cfg, err := k8sCntMgr.GetOverrideFlags()
-	if err != nil {
-		return err
-	}
 	if len(infos) == 0 {
 		return fmt.Errorf("no objects found")
 	}
@@ -46,7 +52,7 @@ func Resources(clientFactory factory.Factory, infos []*resource.Info, skipUserQ 
 	}
 	// Iterate through all objects, applying each one.
 	for _, info := range infos {
-		if err := k8sCntMgr.DeleteObjectFromOtherNamespace(info, *cfg.Namespace); err != nil {
+		if err := k8sCntMgr.DeleteObject(info); err != nil {
 			errs = append(errs, err)
 		}
 	}

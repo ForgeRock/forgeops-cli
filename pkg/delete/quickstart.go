@@ -2,12 +2,26 @@ package delete
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ForgeRock/forgeops-cli/internal/factory"
 	"github.com/ForgeRock/forgeops-cli/internal/k8s"
 	"github.com/ForgeRock/forgeops-cli/internal/printer"
+	"github.com/ForgeRock/forgeops-cli/internal/utils"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 )
+
+type qsSecret struct {
+	secretName string
+	keyName    []string
+	printName  []string
+}
+
+type qsConfig struct {
+	placeholderFQDN      string
+	placeholderNamespace string
+	importantSecrets     []qsSecret
+}
 
 // Quickstart Installs the quickstart in the namespace provided
 func Quickstart(clientFactory factory.Factory, version string, skipUserQ bool) error {
@@ -19,15 +33,25 @@ func Quickstart(clientFactory factory.Factory, version string, skipUserQ bool) e
 	if version != "latest" {
 		fPath = fmt.Sprintf("https://github.com/ForgeRock/forgeops/releases/download/%s/quickstart.yaml", version)
 	}
+	// TODO: We should obtain settings like these from a config that can be ingested at runtime.
+	// Storing these here for now until we have a solution
+	config := qsConfig{
+		placeholderNamespace: "default",
+	}
+
 	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
 	ns, err := k8sCntMgr.Namespace()
 	if err != nil {
 		return err
 	}
 	printer.NoticeHif("Targeting namespace: %q", ns)
-
+	manifestStr, err := utils.DownloadTextFile(fPath)
+	if err != nil {
+		return err
+	}
+	manifestStr = strings.ReplaceAll(manifestStr, "namespace: "+config.placeholderNamespace, "namespace: "+ns)
 	// Delete the quickstart resources listed in the manifest
-	if err := Manifest(clientFactory, fPath, skipUserQ); err != nil {
+	if err := ManifestStr(clientFactory, manifestStr, skipUserQ); err != nil {
 		if err == errDidNotAccept {
 			return nil
 		}

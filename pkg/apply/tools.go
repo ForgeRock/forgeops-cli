@@ -17,7 +17,7 @@ func GHResource(clientFactory factory.Factory, ghRepo, fileName, version string)
 		fPath = fmt.Sprintf("https://github.com/%s/releases/download/%s/%s", ghRepo, version, fileName)
 	}
 	printer.Noticef("Installing %q version: %q", ghRepo, version)
-	if err := Manifest(clientFactory, fPath); err != nil {
+	if err := Manifest(clientFactory, fPath, standardTransforms()...); err != nil {
 		return err
 	}
 	printer.Noticef("Installed %q version: %q", ghRepo, version)

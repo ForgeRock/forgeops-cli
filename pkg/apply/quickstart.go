@@ -3,10 +3,12 @@ package apply
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/ForgeRock/forgeops-cli/internal/factory"
 	"github.com/ForgeRock/forgeops-cli/internal/k8s"
 	"github.com/ForgeRock/forgeops-cli/internal/printer"
+	"github.com/ForgeRock/forgeops-cli/internal/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
@@ -17,8 +19,14 @@ type qsSecret struct {
 	printName  []string
 }
 
+type qsConfig struct {
+	placeholderFQDN      string
+	placeholderNamespace string
+	importantSecrets     []qsSecret
+}
+
 // Quickstart Installs the quickstart in the namespace provided
-func Quickstart(clientFactory factory.Factory, version string) error {
+func Quickstart(clientFactory factory.Factory, version, fqdn string) error {
 	quickstartPath := "https://github.com/ForgeRock/forgeops/releases/latest/download/quickstart.yaml"
 	if len(version) == 0 {
 		version = "latest"
@@ -29,16 +37,20 @@ func Quickstart(clientFactory factory.Factory, version string) error {
 
 	// TODO: We should obtain settings like these from a config that can be ingested at runtime.
 	// Storing these here for now until we have a solution
-	importantSecrets := []qsSecret{
-		{
-			secretName: "am-env-secrets",
-			keyName:    []string{"AM_PASSWORDS_AMADMIN_CLEAR"},
-			printName:  []string{"amadmin user"},
-		},
-		{
-			secretName: "ds-passwords",
-			keyName:    []string{"dirmanager.pw"},
-			printName:  []string{"uid=admin user"},
+	config := qsConfig{
+		placeholderFQDN:      "default.iam.example.com",
+		placeholderNamespace: "default",
+		importantSecrets: []qsSecret{
+			{
+				secretName: "am-env-secrets",
+				keyName:    []string{"AM_PASSWORDS_AMADMIN_CLEAR"},
+				printName:  []string{"amadmin user"},
+			},
+			{
+				secretName: "ds-passwords",
+				keyName:    []string{"dirmanager.pw"},
+				printName:  []string{"uid=admin user"},
+			},
 		},
 	}
 	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
@@ -46,25 +58,33 @@ func Quickstart(clientFactory factory.Factory, version string) error {
 	if err != nil {
 		return err
 	}
+	if len(fqdn) == 0 {
+		fqdn = fmt.Sprintf("%s.iam.example.com", ns)
+	}
 	if err := checkDependencies(); err != nil {
 		return err
 	}
 	printer.NoticeHif("Targeting namespace: %q", ns)
 	printer.NoticeHif("Installing CDQ version: %q", version)
-	if err := Manifest(clientFactory, quickstartPath); err != nil {
+	manifestStr, err := utils.DownloadTextFile(quickstartPath)
+	if err != nil {
+		return err
+	}
+	manifestStr = strings.ReplaceAll(manifestStr, config.placeholderFQDN, fqdn)
+	manifestStr = strings.ReplaceAll(manifestStr, "namespace: "+config.placeholderNamespace, "namespace: "+ns)
+	if err := ManifestStr(clientFactory, manifestStr, standardTransforms()...); err != nil {
 		return err
 	}
 	printer.Noticef("Deployed CDQ version: %q", version)
-
 	printer.Noticef("Waiting for secrets to be generated")
-	if err := waitForSecrets(clientFactory, importantSecrets); err != nil {
+	if err := waitForSecrets(clientFactory, config.importantSecrets); err != nil {
 		return err
 	}
 	printer.Noticef("Relevant passwords:")
-	if err := printSecret(clientFactory, importantSecrets); err != nil {
+	if err := printSecret(clientFactory, config.importantSecrets); err != nil {
 		return err
 	}
-	printURLs(clientFactory)
+	printURLs(fqdn)
 	printer.Noticef("CDQ Deployment Complete. Enjoy!")
 	return nil
 }
@@ -118,18 +138,13 @@ func printSecret(clientFactory factory.Factory, importantSecrets []qsSecret) err
 	return nil
 }
 
-func printURLs(clientFactory factory.Factory) error {
-	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
-	ns, err := k8sCntMgr.Namespace()
-	if err != nil {
-		return err
-	}
-	fqdn := fmt.Sprintf("https://%s.iam.example.com/", ns)
+func printURLs(fqdn string) error {
+	baseURL := fmt.Sprintf("https://%s/", fqdn)
 	printer.Noticef("Relevant URLs:")
-	printer.NoticeHif(fqdn + "platform")
-	printer.NoticeHif(fqdn + "admin")
-	printer.NoticeHif(fqdn + "am")
-	printer.NoticeHif(fqdn + "enduser")
+	printer.NoticeHif(baseURL + "platform")
+	printer.NoticeHif(baseURL + "admin")
+	printer.NoticeHif(baseURL + "am")
+	printer.NoticeHif(baseURL + "enduser")
 	return nil
 
 }
