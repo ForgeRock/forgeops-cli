@@ -33,6 +33,7 @@ type ClientMgr interface {
 	GetObjectsFromServer(resourceType, name string) ([]*resource.Info, error)
 	ApplyObject(info *resource.Info) error
 	DeleteObject(info *resource.Info) error
+	WatchEventsForCondition(timeoutSecs int, ns, name string, gvr schema.GroupVersionResource, condition ConditionFunction) (bool, error)
 	WaitForResource(timeoutSecs int, ns, name string, gvr schema.GroupVersionResource) (bool, error)
 	WaitForResourceStatusCondition(timeoutSecs int, ns, name, conditionStr string, gvr schema.GroupVersionResource) (bool, error)
 	WaitForResourceReplicas(timeoutSecs int, ns, name, replicas string, gvr schema.GroupVersionResource) (bool, error)

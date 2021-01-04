@@ -6,13 +6,14 @@ Diagnose common cluster and platform deployments
 
 
 	Diagnose common cluster and platform deployments
+    
 
 ### Options
 
 ```
       --as string                      Username to impersonate for the operation
       --as-group stringArray           Group to impersonate for the operation, this flag can be repeated to specify multiple groups.
-      --cache-dir string               Default cache directory (default "/home/jcastillo/.kube/cache")
+      --cache-dir string               Default cache directory (default "/home/max/.kube/cache")
       --certificate-authority string   Path to a cert file for the certificate authority
       --client-certificate string      Path to a client certificate file for TLS
       --client-key string              Path to a client key file for TLS
@@ -34,6 +35,6 @@ Diagnose common cluster and platform deployments
 ### SEE ALSO
 
 * [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock platform deployments
-* [forgeops doctor operator](forgeops_doctor_operator.md)	 - Verify that operators are installed and ready
+* [forgeops doctor operator](forgeops_doctor_operator.md)	 - Check Operators Installed and Running
 * [forgeops doctor platform](forgeops_doctor_platform.md)	 - Check the status of platform deployment
 

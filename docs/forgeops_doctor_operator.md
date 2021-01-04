@@ -1,14 +1,14 @@
 ## forgeops doctor operator
 
-Verify that operators are installed and ready
+Check Operators Installed and Running
 
 ### Synopsis
 
 
-    Verify that operators are installed and running:
-	* Checks to ensure that required operators are installed and ready.
-	* Searches all namespaces for the default deployment of secret agent, nginx-ingress, cert-manager.
-	* Checks for a minimum ready count of one.
+	Checks to ensure that required operators are installed and ready.
+	Searches all namespaces for the default deployment of secret agent, nginx-ingress, cert-manager
+	Checks for a minimum ready count of one.
+	
 
 ```
 forgeops doctor operator [flags]
@@ -26,7 +26,7 @@ forgeops doctor operator [flags]
 ```
       --as string                      Username to impersonate for the operation
       --as-group stringArray           Group to impersonate for the operation, this flag can be repeated to specify multiple groups.
-      --cache-dir string               Default cache directory (default "/home/jcastillo/.kube/cache")
+      --cache-dir string               Default cache directory (default "/home/max/.kube/cache")
       --certificate-authority string   Path to a cert file for the certificate authority
       --client-certificate string      Path to a client certificate file for TLS
       --client-key string              Path to a client key file for TLS

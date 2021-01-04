@@ -17,9 +17,6 @@ var overrides = &clientcmd.ConfigOverrides{}
 var ctx context.Context
 var doctorFlags *genericclioptions.ConfigFlags
 
-// Platform
-// TODO not sure if this will be required once we have a more robust pre kubernetes client command setup
-var namespace string
 var ignoreProducts = []string{"ig"}
 
 var ds = &cobra.Command{
@@ -34,15 +31,14 @@ var ds = &cobra.Command{
 		printer.Warnln("Not implemented")
 		return nil
 	},
-	SilenceUsage:      true,
 	DisableAutoGenTag: true,
+	SilenceErrors:     true, //We format and print errors ourselves during Execute().
 }
 
 var platform = &cobra.Command{
 	Use:     "platform",
 	Short:   "Check the status of platform deployment",
 	Aliases: []string{"ds"},
-	// TODO Fix Long: see issue #34:
 	Long: `
 	Check the status of platform deployment by checking ready state and configuration.
 		* check secrets deployed - should we check for backups?
@@ -53,13 +49,8 @@ var platform = &cobra.Command{
 		* check IDM
 		* IG?
 	`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		namespace := cmd.Flag("namespace")
-		_, err := doctor.CheckSAC(ctx, namespace.Value.String(), clientFactory)
-		return err
-	},
-	SilenceUsage:      true,
 	DisableAutoGenTag: true,
+	SilenceErrors:     true, //We format and print errors ourselves during Execute().
 }
 
 // Operators
@@ -68,12 +59,12 @@ var ignoreOperators []string
 var operators = &cobra.Command{
 	Use:     "operator",
 	Aliases: []string{"op"},
-	Short:   "Verify that operators are installed and ready",
+	Short:   "Check Operators Installed and Running",
 	Long: `
-    Verify that operators are installed and running:
-	* Checks to ensure that required operators are installed and ready.
-	* Searches all namespaces for the default deployment of secret agent, nginx-ingress, cert-manager.
-	* Checks for a minimum ready count of one.`,
+	Checks to ensure that required operators are installed and ready.
+	Searches all namespaces for the default deployment of secret agent, nginx-ingress, cert-manager
+	Checks for a minimum ready count of one.
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := clientFactory.StaticClient()
 		if err != nil {
@@ -85,8 +76,8 @@ var operators = &cobra.Command{
 		}
 		return nil
 	},
-	SilenceUsage:      true,
 	DisableAutoGenTag: true,
+	SilenceErrors:     true, //We format and print errors ourselves during Execute().
 }
 
 var doctorCmd = &cobra.Command{
@@ -94,13 +85,14 @@ var doctorCmd = &cobra.Command{
 	Aliases: []string{"dr"},
 	Short:   "Diagnose common cluster and platform deployments",
 	Long: `
-	Diagnose common cluster and platform deployments`,
+	Diagnose common cluster and platform deployments
+    `,
 	// Configure Client Mgr for all subcommands
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		clientFactory = factory.NewFactory(doctorFlags)
 	},
-	SilenceUsage:      true,
 	DisableAutoGenTag: true,
+	SilenceErrors:     true, //We format and print errors ourselves during Execute().
 }
 
 func init() {

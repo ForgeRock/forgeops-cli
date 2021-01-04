@@ -2,26 +2,25 @@ package k8s
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
 
-	"github.com/ForgeRock/forgeops-cli/internal/printer"
-
+	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/apimachinery/pkg/watch"
 	watchtools "k8s.io/client-go/tools/watch"
 )
 
-type conditionFunction func(event watch.Event, obj *unstructured.Unstructured) (bool, error)
+var ErrWatchTimeout error = errors.New("wait timeout")
 
-// watchEventsForCondition sets a watch for events and evaluatest the provided conditionFunction
-func (cmgr clientMgr) watchEventsForCondition(timeoutSecs int, ns, name string, gvr schema.GroupVersionResource, condition conditionFunction) (bool, error) {
+type ConditionFunction func(event watch.Event, obj *unstructured.Unstructured) (bool, error)
+
+// WatchEventsForCondition sets a watch for events and evaluatest the provided ConditionFunction
+func (cmgr clientMgr) WatchEventsForCondition(timeoutSecs int, ns, name string, gvr schema.GroupVersionResource, condition ConditionFunction) (bool, error) {
 	for {
 		endTime := time.Now().Add(time.Duration(timeoutSecs) * time.Second)
 		dynamicClient, err := cmgr.DynamicClient()
@@ -39,7 +38,6 @@ func (cmgr clientMgr) watchEventsForCondition(timeoutSecs int, ns, name string, 
 		// If the object is present, let's evaluate if the condition has already been met.
 		if len(gottenObjList.Items) != 0 {
 			if ok, err := condition(watch.Event{}, &gottenObjList.Items[0]); ok && err == nil {
-				printer.Noticef(fmt.Sprintf("condition met for %s/%s", gvr.Resource, name))
 				return true, nil
 			}
 		}
@@ -54,7 +52,7 @@ func (cmgr clientMgr) watchEventsForCondition(timeoutSecs int, ns, name string, 
 		timeout := endTime.Sub(time.Now())
 		if timeout < 0 {
 			// we're out of time
-			return false, fmt.Errorf("%s on %s/%s", wait.ErrWaitTimeout.Error(), gvr, name)
+			return false, errors.WithMessagef(ErrWatchTimeout, "timedout on %s/%s", gvr, name)
 		}
 		isConditionMet := func(event watch.Event) (bool, error) {
 			if event.Type == watch.Error {
@@ -73,26 +71,25 @@ func (cmgr clientMgr) watchEventsForCondition(timeoutSecs int, ns, name string, 
 		if err != nil || lastEvent == nil {
 			return false, err
 		}
-		printer.Noticef(fmt.Sprintf("condition met for %s/%s", gvr.Resource, name))
 		return true, nil
 	}
 }
 
 // WaitForResource waits until a resource is present in the k8s API
 func (cmgr clientMgr) WaitForResource(timeoutSecs int, ns, name string, gvr schema.GroupVersionResource) (bool, error) {
-	var condFunc conditionFunction = func(event watch.Event, obj *unstructured.Unstructured) (bool, error) {
+	var condFunc ConditionFunction = func(event watch.Event, obj *unstructured.Unstructured) (bool, error) {
 		if event.Type == watch.Deleted {
 			return false, nil
 		}
 		return true, nil
 	}
-	return cmgr.watchEventsForCondition(timeoutSecs, ns, name, gvr, condFunc)
+	return cmgr.WatchEventsForCondition(timeoutSecs, ns, name, gvr, condFunc)
 
 }
 
 // WaitForResourceStatusCondition waits until a resource is present in the k8s API with a given status.conditions
 func (cmgr clientMgr) WaitForResourceStatusCondition(timeoutSecs int, ns, name, conditionStr string, gvr schema.GroupVersionResource) (bool, error) {
-	var condFunc conditionFunction = func(event watch.Event, obj *unstructured.Unstructured) (bool, error) {
+	var condFunc ConditionFunction = func(event watch.Event, obj *unstructured.Unstructured) (bool, error) {
 		conditions, found, err := unstructured.NestedSlice(obj.Object, "status", "conditions")
 		if err != nil {
 			return false, err
@@ -115,13 +112,13 @@ func (cmgr clientMgr) WaitForResourceStatusCondition(timeoutSecs int, ns, name, 
 
 		return false, nil
 	}
-	return cmgr.watchEventsForCondition(timeoutSecs, ns, name, gvr, condFunc)
+	return cmgr.WatchEventsForCondition(timeoutSecs, ns, name, gvr, condFunc)
 
 }
 
 // WaitForResourceReplicas waits until a resource has the given number of replicas in "ready" state
 func (cmgr clientMgr) WaitForResourceReplicas(timeoutSecs int, ns, name, replicas string, gvr schema.GroupVersionResource) (bool, error) {
-	var condFunc conditionFunction = func(event watch.Event, obj *unstructured.Unstructured) (bool, error) {
+	var condFunc ConditionFunction = func(event watch.Event, obj *unstructured.Unstructured) (bool, error) {
 		readyReplicas, found, err := unstructured.NestedString(obj.Object, "status", "readyReplicas")
 		if err != nil {
 			return false, err
@@ -131,6 +128,5 @@ func (cmgr clientMgr) WaitForResourceReplicas(timeoutSecs int, ns, name, replica
 		}
 		return strings.EqualFold(readyReplicas, replicas), nil
 	}
-	return cmgr.watchEventsForCondition(timeoutSecs, ns, name, gvr, condFunc)
-
+	return cmgr.WatchEventsForCondition(timeoutSecs, ns, name, gvr, condFunc)
 }
