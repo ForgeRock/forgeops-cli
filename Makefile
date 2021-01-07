@@ -33,6 +33,13 @@ clean:
 	@test ! -e bin/${BIN_NAME} || rm bin/${BIN_NAME}
 	@test ! -e dist || rm -r dist
 
+
+deps:
+	go get ./...
+
+gen-mocks: deps
+	mockery --dir internal/k8s --output internal/mock --all
+
 test tests:
 	@go test ./...
 	@echo "tests completed"

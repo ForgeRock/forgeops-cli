@@ -11,6 +11,8 @@ import (
 	"github.com/ForgeRock/forgeops-cli/internal/k8s"
 )
 
+var ErrExpressionResult error = errors.New("only boolean expressions are permitted")
+
 // &metav1.Duration{Duration: 100 * 365 * 24 * time.Hour}
 // Check expression to be evaluated against a resource
 type Check struct {
@@ -37,7 +39,7 @@ func conditionExpression(expression string) k8s.ConditionFunction {
 		// compile expression with object, Env help with typing during evaluation
 		pgrm, err := expr.Compile(expression, expr.Env(obj.Object), expr.AsBool())
 		if err != nil {
-			return false, err
+			return false, errors.WithMessage(ErrExpressionResult, err.Error())
 		}
 		// check against the object
 		output, err := expr.Run(pgrm, obj.Object)
@@ -50,16 +52,16 @@ func conditionExpression(expression string) k8s.ConditionFunction {
 
 // Check run wait on resource until expression passes
 // note at the moment it doesn't track any success/fails
-func (h *Resource) Check(clientMgr k8s.ClientMgr, namespace string) (bool, error) {
+func (r *Resource) Check(clientMgr k8s.ClientMgr, namespace string) (bool, error) {
 	gvr := schema.GroupVersionResource{
-		Group:    h.Group,
-		Version:  h.APIVersion,
-		Resource: h.Resource,
+		Group:    r.Group,
+		Version:  r.APIVersion,
+		Resource: r.Resource,
 	}
 	passed := true
-	for _, check := range h.Checks {
+	for _, check := range r.Checks {
 		// TODO WatchEventsForCondition should use a context
-		met, err := clientMgr.WatchEventsForCondition(int(check.Timeout.Seconds()), namespace, h.Name, gvr, conditionExpression(check.Expression))
+		met, err := clientMgr.WatchEventsForCondition(int(check.Timeout.Seconds()), namespace, r.Name, gvr, conditionExpression(check.Expression))
 		// A watch or condition not being met is failed, but not an _error_
 		if errors.Is(err, k8s.ErrWatchTimeout) {
 			passed = false

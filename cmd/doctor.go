@@ -32,12 +32,11 @@ var ds = &cobra.Command{
 		return nil
 	},
 	DisableAutoGenTag: true,
-	SilenceErrors:     true, //We format and print errors ourselves during Execute().
 }
 
 var platform = &cobra.Command{
 	Use:     "platform",
-	Short:   "Check the status of platform deployment",
+	Short:   "Verify that operators are installed and ready",
 	Aliases: []string{"ds"},
 	Long: `
 	Check the status of platform deployment by checking ready state and configuration.
@@ -50,7 +49,7 @@ var platform = &cobra.Command{
 		* IG?
 	`,
 	DisableAutoGenTag: true,
-	SilenceErrors:     true, //We format and print errors ourselves during Execute().
+	SilenceUsage:      true,
 }
 
 // Operators
@@ -59,12 +58,14 @@ var ignoreOperators []string
 var operators = &cobra.Command{
 	Use:     "operator",
 	Aliases: []string{"op"},
-	Short:   "Check Operators Installed and Running",
+	Short:   "Verify that operators are installed and ready",
 	Long: `
 	Checks to ensure that required operators are installed and ready.
-	Searches all namespaces for the default deployment of secret agent, nginx-ingress, cert-manager
+	Searches all namespaces for the default deployment of secret agent, nginx-ingress, and cert-manager
 	Checks for a minimum ready count of one.
 	`,
+	SilenceErrors: true,
+	SilenceUsage:  true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := clientFactory.StaticClient()
 		if err != nil {
@@ -77,7 +78,6 @@ var operators = &cobra.Command{
 		return nil
 	},
 	DisableAutoGenTag: true,
-	SilenceErrors:     true, //We format and print errors ourselves during Execute().
 }
 
 var doctorCmd = &cobra.Command{
@@ -92,7 +92,6 @@ var doctorCmd = &cobra.Command{
 		clientFactory = factory.NewFactory(doctorFlags)
 	},
 	DisableAutoGenTag: true,
-	SilenceErrors:     true, //We format and print errors ourselves during Execute().
 }
 
 func init() {
