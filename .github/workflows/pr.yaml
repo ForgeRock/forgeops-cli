@@ -65,8 +65,14 @@ jobs:
         GIT_COMMIT: ${{ github.sha }} 
         IMAGE_NAME: "forgerock/forgeops-cli"
  
-    - name: Upload artifacts to GH Actions
+  upload:
+    name: Upload Artifacts
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+    steps:
+    - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: binaries
+        name: artifacts
         path: dist/*.tar.gz
