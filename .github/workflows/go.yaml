@@ -1,6 +1,7 @@
 name: Go
 on:
   push:
+    tags: [ "*" ]
     branches: [ master ]
   pull_request:
     branches: [ master ]
@@ -49,8 +50,10 @@ jobs:
         echo "GIT_DIRTY="$(test -n "`git status --porcelain`" && echo "+CHANGES" || true) >> $GITHUB_ENV
         echo "VERSION="$(grep "var Version " pkg/version/version.go | awk -F " = " -F '"' '{ print $2 }') >> $GITHUB_ENV
         echo "BUILD_DATE="$(date '+%Y-%m-%d-%H:%M:%S') >> $GITHUB_ENV
+        echo "TAG_NAME="$(git describe --tags --abbrev=0) >> $GITHUB_ENV
 
-    - name: Run GoReleaser PR
+    # Only run this step if triggered by a PR
+    - name: PR Binary Build
       if: ${{ github.event_name == 'pull_request' }}
       uses: goreleaser/goreleaser-action@v2
       with:
@@ -63,35 +66,23 @@ jobs:
         TAG_NAME: ${{ env.VERSION }}-pr.${{ github.event.pull_request.number }}
         GIT_COMMIT: ${{ github.sha }} 
         IMAGE_NAME: "forgerock/forgeops-cli"
-
-    - name: Upload assets
+  
+    # Only run this step if we've pushed a tag
+    - name: Create Release
+      if: ${{ (github.event_name == 'push') && (startsWith( github.ref, 'refs/tags/')) }}
+      uses: goreleaser/goreleaser-action@v2
+      with:
+        version: latest
+        args: release --rm-dist
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_VERSION_NAME: ${{ env.VERSION }}-pr.${{ github.event.pull_request.number }}
+        GIT_COMMIT: ${{ github.sha }} 
+        IMAGE_NAME: "forgerock/forgeops-cli"
+  
+    - name: Upload artifacts to GH Actions
       uses: actions/upload-artifact@v2
       with:
         name: binaries
-        path: dist/*
-
-
-# snapshot:
-# TAG_NAME=${PR_VERSION_NAME} BUILD_DATE=${BUILD_DATE} GIT_COMMIT=${GIT_COMMIT} GIT_DIRTY=${GIT_DIRTY} goreleaser --snapshot
-
-# pr-build: pr-tag snapshot
-# @echo "PR Build Completed: gs://engineering-devops_cloudbuild/forgeops-cli-artifacts/$(PR_NUMBER)"
-
-# # Create github release.
-# - name: goreleaser/goreleaser
-#   entrypoint: /bin/sh
-#   dir: gopath/src/github.com
-#   env: ['GOPATH=/workspace/gopath']
-#   args: ['-c', 'cd ForgeRock/forgeops-cli && make pr-build PR_NUMBER=$_PR_NUMBER' ]
-#   secretEnv: ['GITHUB_TOKEN']
-# secrets:
-# - kmsKeyName: projects/engineering-devops/locations/global/keyRings/engineering-devops/cryptoKeys/github-key
-#   secretEnv:
-#     GITHUB_TOKEN: |
-#       CiQAWHysaumBCi7eM+fysjiJWzP2vFq50c6h78JyNyyS3RJSQlASUQBqP6GPGGhZy6CwJOwzTvLf
-#       jhnEY3cT3uM0RunKcS1wXK+7q93BAmi3UsV7z2HWf3/ppWiwZTEepEd4X1S9NgVEQPTZuQ+ZJbdN
-#       q2BJRn6SVA==
-# artifacts:
-#   objects:
-#     location: 'gs://engineering-devops_cloudbuild/forgeops-cli-artifacts/$_PR_NUMBER'
-#     paths: ['dist/*']
+        path: dist/*.tar.gz

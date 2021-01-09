@@ -39,4 +39,5 @@ release:
     owner: ForgeRock
     name: forgeops-cli
   prerelease: auto
+  draft: true
   name_template: "{{.ProjectName}}-v{{.Version}}"
