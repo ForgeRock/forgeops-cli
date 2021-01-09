@@ -1,0 +1,96 @@
+name: Go
+on:
+  # push:
+  #   branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  basic-checks:
+    name: Run basic-checks
+    runs-on: ubuntu-latest
+    # container: golang:1.14-buster
+    steps:
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.15
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: go-fmt
+      run: go fmt ./...
+
+    - name: Check for uncommited formatting
+      run: if [ -n "$(git status --untracked-files=no --porcelain)" ]; then echo "There are uncommitted changes"; exit 1; fi
+    
+    - name: Run tests
+      run: go test ./... -cover
+    
+  build:
+    name: Run integration-tests
+    needs: basic-checks
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.15
+      id: go
+
+    - name: Set Go Releaser Environment
+      run: |
+        echo "GIT_DIRTY="$(test -n "`git status --porcelain`" && echo "+CHANGES" || true) >> $GITHUB_ENV
+        echo "VERSION="$(grep "var Version " pkg/version/version.go | awk -F " = " -F '"' '{ print $$2 }') >> $GITHUB_ENV
+        echo "BUILD_DATE="$(date '+%Y-%m-%d-%H:%M:%S') >> $GITHUB_ENV
+
+    - name: Run GoReleaser PR
+      uses: goreleaser/goreleaser-action@v2
+      with:
+        version: latest
+        args: --snapshot
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_VERSION_NAME: ${{ env.VERSION }}-pr.${{ github.event.pull_request.number }}
+        TAG_NAME: ${{ env.VERSION }}-pr.${{ github.event.pull_request.number }}
+        GIT_COMMIT: ${{ github.sha }} 
+        IMAGE_NAME: "forgerock/forgeops-cli"
+
+    # - name: Upload assets
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: myapp
+    #     path: dist/*
+
+
+# snapshot:
+# TAG_NAME=${PR_VERSION_NAME} BUILD_DATE=${BUILD_DATE} GIT_COMMIT=${GIT_COMMIT} GIT_DIRTY=${GIT_DIRTY} goreleaser --snapshot
+
+# pr-build: pr-tag snapshot
+# @echo "PR Build Completed: gs://engineering-devops_cloudbuild/forgeops-cli-artifacts/$(PR_NUMBER)"
+
+# # Create github release.
+# - name: goreleaser/goreleaser
+#   entrypoint: /bin/sh
+#   dir: gopath/src/github.com
+#   env: ['GOPATH=/workspace/gopath']
+#   args: ['-c', 'cd ForgeRock/forgeops-cli && make pr-build PR_NUMBER=$_PR_NUMBER' ]
+#   secretEnv: ['GITHUB_TOKEN']
+# secrets:
+# - kmsKeyName: projects/engineering-devops/locations/global/keyRings/engineering-devops/cryptoKeys/github-key
+#   secretEnv:
+#     GITHUB_TOKEN: |
+#       CiQAWHysaumBCi7eM+fysjiJWzP2vFq50c6h78JyNyyS3RJSQlASUQBqP6GPGGhZy6CwJOwzTvLf
+#       jhnEY3cT3uM0RunKcS1wXK+7q93BAmi3UsV7z2HWf3/ppWiwZTEepEd4X1S9NgVEQPTZuQ+ZJbdN
+#       q2BJRn6SVA==
+# artifacts:
+#   objects:
+#     location: 'gs://engineering-devops_cloudbuild/forgeops-cli-artifacts/$_PR_NUMBER'
+#     paths: ['dist/*']
