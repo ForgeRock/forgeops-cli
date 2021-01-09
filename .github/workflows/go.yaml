@@ -1,7 +1,7 @@
 name: Go
 on:
-  # push:
-  #   branches: [ master ]
+  push:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -31,7 +31,7 @@ jobs:
       run: go test ./... -cover
     
   build:
-    name: Run integration-tests
+    name: Build Binaries
     needs: basic-checks
     runs-on: ubuntu-latest
     steps:
@@ -50,18 +50,8 @@ jobs:
         echo "VERSION="$(grep "var Version " pkg/version/version.go | awk -F " = " -F '"' '{ print $2 }') >> $GITHUB_ENV
         echo "BUILD_DATE="$(date '+%Y-%m-%d-%H:%M:%S') >> $GITHUB_ENV
 
-    - name: printenv
-      run: printenv
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PR_NUMBER: ${{ github.event.pull_request.number }}
-        PR_VERSION_NAME: ${{ env.VERSION }}-pr.${{ github.event.pull_request.number }}
-        TAG_NAME: ${{ env.VERSION }}-pr.${{ github.event.pull_request.number }}
-        GIT_COMMIT: ${{ github.sha }} 
-        IMAGE_NAME: "forgerock/forgeops-cli"
-
-
     - name: Run GoReleaser PR
+      if: ${{ github.event_name == 'pull_request' }}
       uses: goreleaser/goreleaser-action@v2
       with:
         version: latest
@@ -74,11 +64,11 @@ jobs:
         GIT_COMMIT: ${{ github.sha }} 
         IMAGE_NAME: "forgerock/forgeops-cli"
 
-    # - name: Upload assets
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: myapp
-    #     path: dist/*
+    - name: Upload assets
+      uses: actions/upload-artifact@v2
+      with:
+        name: binaries
+        path: dist/*
 
 
 # snapshot:
