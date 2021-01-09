@@ -1,3 +1,4 @@
 gopath/
 .vscode/launch.json
 bin/*
+dist/*
