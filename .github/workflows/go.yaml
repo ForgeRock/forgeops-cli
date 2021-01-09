@@ -47,7 +47,7 @@ jobs:
     - name: Set Go Releaser Environment
       run: |
         echo "GIT_DIRTY="$(test -n "`git status --porcelain`" && echo "+CHANGES" || true) >> $GITHUB_ENV
-        echo "VERSION="$(grep "var Version " pkg/version/version.go | awk -F " = " -F '"' '{ print $$2 }') >> $GITHUB_ENV
+        echo "VERSION="$(grep "var Version " pkg/version/version.go | awk -F " = " -F '"' '{ print $2 }') >> $GITHUB_ENV
         echo "BUILD_DATE="$(date '+%Y-%m-%d-%H:%M:%S') >> $GITHUB_ENV
 
     - name: printenv
