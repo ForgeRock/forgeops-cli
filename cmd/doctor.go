@@ -6,93 +6,145 @@ import (
 	"github.com/ForgeRock/forgeops-cli/internal/factory"
 	"github.com/ForgeRock/forgeops-cli/internal/printer"
 	"github.com/ForgeRock/forgeops-cli/pkg/doctor"
+	"github.com/ForgeRock/forgeops-cli/pkg/health"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-// cmd globals config
-var kubeConfig string
-var overrides = &clientcmd.ConfigOverrides{}
-var ctx context.Context
-var doctorFlags *genericclioptions.ConfigFlags
+var (
+	// cmd globals config
+	kubeConfig    string
+	overrides     = &clientcmd.ConfigOverrides{}
+	ctx           context.Context
+	doctorFlags   *genericclioptions.ConfigFlags
+	operatorFlags *genericclioptions.ConfigFlags
+	allNamespaces bool
 
-var ignoreProducts = []string{"ig"}
-
-var ds = &cobra.Command{
-	Use:   "directoryserver",
-	Short: "Check the status of Directory Server deployment",
-	Long: `
+	ds = &cobra.Command{
+		Use:   "directoryserver",
+		Short: "Check the status of Directory Server deployment",
+		Long: `
 	Check the status of Directory Server deployment by checking ready state and configuration.
 	  * check workload state
 	  * should we call an endpoint/ldap?
 	`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		printer.Warnln("Not implemented")
-		return nil
-	},
-	DisableAutoGenTag: true,
-}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			printer.Warnln("Not implemented")
+			return nil
+		},
+		Hidden:            true,
+		DisableAutoGenTag: true,
+	}
 
-var platform = &cobra.Command{
-	Use:     "platform",
-	Short:   "Verify that operators are installed and ready",
-	Aliases: []string{"ds"},
-	Long: `
-	Check the status of platform deployment by checking ready state and configuration.
-		* check secrets deployed - should we check for backups?
-		* check configs deployed
-		* check DS deployment - check backups?
-		* check AM deployment - all "Ready" - any other checks e.g. curl?
-		* amster? completed - and date?
-		* check IDM
-		* IG?
-	`,
-	DisableAutoGenTag: true,
-	SilenceUsage:      true,
-}
+	platform = &cobra.Command{
+		Use:   "platform",
+		Short: "Verify that operators are installed and ready",
+		Long: `
+		Checks that the platform is running.
+	    `,
+		Example: `
+		# validate the platform is running in the current namespace
+		forgeops doctor platform
+		# validate the platform is running in the "prod" namespace
+		forgeops doctor platform -n prod
+		`,
+		DisableAutoGenTag: true,
+		SilenceUsage:      true,
+		SilenceErrors:     true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			configHealth, err := health.HealthFromBytes(doctor.DefaultConfigCheck)
+			if err != nil {
+				return err
+			}
+			platformHlth, err := health.HealthFromBytes(doctor.DefaultPlatformHealth)
+			if err != nil {
+				return err
+			}
 
-// Operators
-var ignoreOperators []string
+			confErr := health.Run(clientFactory, configHealth, true)
+			platErr := health.Run(clientFactory, platformHlth, false)
+			if confErr != nil && platErr != nil {
+				return errors.Wrap(confErr, platErr.Error())
 
-var operators = &cobra.Command{
-	Use:     "operator",
-	Aliases: []string{"op"},
-	Short:   "Verify that operators are installed and ready",
-	Long: `
-	Checks to ensure that required operators are installed and ready.
-	Searches all namespaces for the default deployment of secret agent, nginx-ingress, and cert-manager
-	Checks for a minimum ready count of one.
-	`,
-	SilenceErrors: true,
-	SilenceUsage:  true,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := clientFactory.StaticClient()
-		if err != nil {
+			} else if confErr != nil {
+				return confErr
+			} else if platErr != nil {
+				return platErr
+			}
 			return err
-		}
-		err = doctor.CheckOperators(ctx, client)
-		if err != nil {
-			return err
-		}
-		return nil
-	},
-	DisableAutoGenTag: true,
-}
+		},
+	}
 
-var doctorCmd = &cobra.Command{
-	Use:     "doctor",
-	Aliases: []string{"dr"},
-	Short:   "Diagnose common cluster and platform deployments",
-	Long: `
-	Diagnose common cluster and platform deployments
-    `,
-	// Configure Client Mgr for all subcommands
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		clientFactory = factory.NewFactory(doctorFlags)
-	},
-	DisableAutoGenTag: true,
-}
+	operators = &cobra.Command{
+		Use:     "operators",
+		Aliases: []string{"op", "operator"},
+		Short:   "Verify that operators are installed and ready",
+		Long: `
+	    Checks to ensure that required operators are installed and ready.
+	    `,
+		DisableAutoGenTag: true,
+		SilenceErrors:     true,
+		SilenceUsage:      true,
+		Example: `
+		# check for operators in any namespaces
+		forgeops doctor operators
+		# check for operators in single namespace
+		forgeops doctor operators --all-namespaces=false
+		`,
+
+		// Configure Client Mgr for all subcommands
+		RunE: func(cmd *cobra.Command, args []string) error {
+			hlth, err := health.HealthFromBytes(doctor.DefaultOperatorHealth)
+			if err != nil {
+				return err
+			}
+			return health.Run(clientFactory, hlth, allNamespaces)
+		},
+	}
+
+	doctorCmd = &cobra.Command{
+		Use:               "doctor",
+		Aliases:           []string{"dr"},
+		DisableAutoGenTag: true,
+		Short:             "Diagnose common cluster and platform deployments",
+		Long: `
+		Diagnose issues related to running and deploying the ForgeRock platform.
+		`,
+		Example: `
+		# run all health checks
+		forgeops doctor
+		`,
+		// Configure Client Mgr for all subcommands
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			clientFactory = factory.NewFactory(doctorFlags)
+
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			operatorHlth, err := health.HealthFromBytes(doctor.DefaultOperatorHealth)
+			if err != nil {
+				return err
+			}
+			platformHlth, err := health.HealthFromBytes(doctor.DefaultPlatformHealth)
+			if err != nil {
+				return err
+			}
+
+			operErr := health.Run(clientFactory, operatorHlth, true)
+			platErr := health.Run(clientFactory, platformHlth, false)
+			if operErr != nil && platErr != nil {
+				return errors.Wrap(operErr, platErr.Error())
+
+			} else if operErr != nil {
+				return operErr
+			} else if platErr != nil {
+				return platErr
+			}
+			return err
+		},
+	}
+)
 
 func init() {
 	ctx = context.Background()
@@ -101,10 +153,9 @@ func init() {
 	doctorFlags = initK8sFlags(doctorCmd.PersistentFlags())
 
 	// operators
-	operators.LocalFlags().StringSlice("ignore-operators", ignoreOperators, "comma seperated list of operators that should ignored during checks")
+	operators.PersistentFlags().BoolVarP(&allNamespaces, "all-namespaces", "A", true, "Default: true. If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace.")
 
 	//	platform
-	platform.LocalFlags().StringSlice("ignore-products", ignoreProducts, "comma seperated list of products that should ignored during checks")
 	platform.AddCommand(ds)
 
 	// module command

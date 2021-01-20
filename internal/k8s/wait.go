@@ -29,11 +29,10 @@ func (cmgr clientMgr) WatchEventsForCondition(timeoutSecs int, ns, name string, 
 		}
 		nameSelector := fields.OneTermEqualSelector("metadata.name", name).String()
 		gottenObjList, err := dynamicClient.Resource(gvr).Namespace(ns).List(context.TODO(), metav1.ListOptions{FieldSelector: nameSelector})
-		if err != nil {
-			// ignore notFound. It is ok if the objet is not there yet.
-			if !apierrors.IsNotFound(err) {
-				return false, err
-			}
+		if apierrors.IsNotFound(err) {
+			gottenObjList = &unstructured.UnstructuredList{}
+		} else if err != nil && !apierrors.IsNotFound(err) {
+			return false, err
 		}
 		// If the object is present, let's evaluate if the condition has already been met.
 		if len(gottenObjList.Items) != 0 {

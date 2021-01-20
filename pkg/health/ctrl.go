@@ -8,29 +8,10 @@ import (
 	"github.com/ForgeRock/forgeops-cli/internal/printer"
 )
 
-var healthobj = []byte(`
----
-kind: health
-version: v1alpha
-metadata:
-  name: forgeops-platform-config
-spec:
-  resources:
-    - resource: secretagentconfigurations
-      name: forgerock-sac
-      apiversion: v1alpha1
-      group: secret-agent.secrets.forgerock.io
-      checks:
-        - expression: status.totalManagedObjects == 12
-          timeout: 0s
-        - expression: status.state == "Completed"
-          timeout: 0s
-`)
-
 // HealthFromBytes deserialize from bytes
 func HealthFromBytes(hbytes []byte) (*Health, error) {
 	hlth := &Health{}
-	err := yaml.Unmarshal(healthobj, hlth)
+	err := yaml.Unmarshal(hbytes, hlth)
 	if err != nil {
 		return &Health{}, err
 	}
@@ -38,16 +19,16 @@ func HealthFromBytes(hbytes []byte) (*Health, error) {
 }
 
 // Run complete a check on a health object - for CLI based use
-func Run(clientFactory factory.Factory, hlth *Health) error {
+func Run(clientFactory factory.Factory, hlth *Health, allNamespaces bool) error {
 	clientMgr := k8s.NewK8sClientMgr(clientFactory)
-	allHealthy, err := hlth.CheckResources(clientMgr)
+	allHealthy, err := hlth.CheckResources(clientMgr, allNamespaces)
 	if err != nil {
 		return err
 	}
 	if !allHealthy {
 		numHealthy := len(hlth.healthy)
 		totalNum := len(hlth.Spec.Resources)
-		printer.Warnf("Health check %s has %d / %d healthy resources", hlth.Name, numHealthy, totalNum)
+		printer.Warnf("Health check %s has %d / %d healthy resources", hlth.Metadata.Name, numHealthy, totalNum)
 		for _, resourceName := range hlth.healthy {
 			printer.Noticef("Resource %s healthy", resourceName)
 

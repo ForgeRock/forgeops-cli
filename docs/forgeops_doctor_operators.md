@@ -1,27 +1,36 @@
-## forgeops doctor
+## forgeops doctor operators
 
-Diagnose common cluster and platform deployments
+Verify that operators are installed and ready
 
 ### Synopsis
 
 
-		Diagnose issues related to running and deploying the ForgeRock platform.
-		
+	    Checks to ensure that required operators are installed and ready.
+	    
 
 ```
-forgeops doctor [flags]
+forgeops doctor operators [flags]
 ```
 
 ### Examples
 
 ```
 
-		# run all health checks
-		forgeops doctor
+		# check for operators in any namespaces
+		forgeops doctor operators
+		# check for operators in single namespace
+		forgeops doctor operators --all-namespaces=false
 		
 ```
 
 ### Options
+
+```
+  -A, --all-namespaces   Default: true. If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace. (default true)
+  -h, --help             help for operators
+```
+
+### Options inherited from parent commands
 
 ```
       --as string                      Username to impersonate for the operation
@@ -32,7 +41,6 @@ forgeops doctor [flags]
       --client-key string              Path to a client key file for TLS
       --cluster string                 The name of the kubeconfig cluster to use
       --context string                 The name of the kubeconfig context to use
-  -h, --help                           help for doctor
       --insecure-skip-tls-verify       If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure
       --kubeconfig string              Path to the kubeconfig file to use for CLI requests.
   -n, --namespace string               If present, the namespace scope for this CLI request
@@ -47,7 +55,5 @@ forgeops doctor [flags]
 
 ### SEE ALSO
 
-* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock platform deployments
-* [forgeops doctor operators](forgeops_doctor_operators.md)	 - Verify that operators are installed and ready
-* [forgeops doctor platform](forgeops_doctor_platform.md)	 - Verify that operators are installed and ready
+* [forgeops doctor](forgeops_doctor.md)	 - Diagnose common cluster and platform deployments
 

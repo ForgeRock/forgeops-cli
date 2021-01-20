@@ -50,7 +50,6 @@ func newHealthFromResources(resources []tResource) *Health {
 		Spec: V1AlphaHealthSpec{
 			Resources: builtResources,
 		},
-		Name: "testhealth",
 		Metadata: metav1.ObjectMeta{
 			Name: "testhealth",
 		},
@@ -128,7 +127,7 @@ func TestHealthyLogic(t *testing.T) {
 			).Return(resource.conditionMet, resource.err)
 		}
 
-		res, resultErr := testHealth.CheckResources(testClientMgr)
+		res, resultErr := testHealth.CheckResources(testClientMgr, false)
 		if resultErr != tc.expectedErr {
 			t.Errorf("expected no error but found %s", resultErr.Error())
 		}

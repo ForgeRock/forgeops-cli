@@ -13,9 +13,9 @@ var cleanFlags *genericclioptions.ConfigFlags
 
 var cleanCmd = &cobra.Command{
 	Use:   "clean",
-	Short: "Remove any remaining ForgeRock components from the given namespace",
+	Short: "Remove any remaining platform components from the given namespace",
 	Long: `
-    Remove any remaining ForgeRock components from the given namespace`,
+    Remove any remaining platform components from the given namespace`,
 	// Configure Client Mgr for all subcommands
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		clientFactory = factory.NewFactory(cleanFlags)

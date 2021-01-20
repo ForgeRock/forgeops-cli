@@ -1,25 +1,32 @@
 ## forgeops doctor platform
 
-Check the status of platform deployment
+Verify that operators are installed and ready
 
 ### Synopsis
 
 
-	Check the status of platform deployment by checking ready state and configuration.
-		* check secrets deployed - should we check for backups?
-		* check configs deployed
-		* check DS deployment - check backups?
-		* check AM deployment - all "Ready" - any other checks e.g. curl?
-		* amster? completed - and date?
-		* check IDM
-		* IG?
-	
+		Checks that the ForgeRock platform is running.
+	    
+
+```
+forgeops doctor platform [flags]
+```
+
+### Examples
+
+```
+
+		# validate the platform is running in the current namespace
+		forgeops doctor platform
+		# validate the platform is running in the "prod" namespace
+		forgeops doctor platform -n prod
+		
+```
 
 ### Options
 
 ```
-  -h, --help                      help for platform
-      --ignore-products strings   comma seperated list of products that should ignored during checks (default [ig])
+  -h, --help   help for platform
 ```
 
 ### Options inherited from parent commands
@@ -48,5 +55,4 @@ Check the status of platform deployment
 ### SEE ALSO
 
 * [forgeops doctor](forgeops_doctor.md)	 - Diagnose common cluster and platform deployments
-* [forgeops doctor platform directoryserver](forgeops_doctor_platform_directoryserver.md)	 - Check the status of Directory Server deployment
 

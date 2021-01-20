@@ -1,56 +1,136 @@
 package doctor
 
-import (
-	"context"
-	"fmt"
+var (
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
+	// DefaultOperatorHealth default health definition for operators
+	DefaultOperatorHealth = []byte(`
+---
+kind: health
+version: v1alpha
+metadata:
+  name: forgeops-operators
+spec:
+  resources:
+    - resource: deployments
+      name: secret-agent-controller-manager
+      apiversion: v1
+      group: apps
+      checks:
+        - expression: status.availableReplicas == 1
+          timeout: 0s
+    - resource: deployments
+      name: ingress-nginx-controller
+      apiversion: v1
+      group: apps
+      checks:
+        - expression: status.availableReplicas == 1
+          timeout: 0s
+    - resource: deployments
+      name: cert-manager
+      apiversion: v1
+      group: apps
+      checks:
+        - expression: status.availableReplicas == 1
+          timeout: 0s
+`)
+	// DefaultConfigCheck default configuration check
+	DefaultConfigCheck = []byte(`
+---
+kind: health
+version: v1alpha
+metadata:
+  name: forgerock-config-validation
+spec:
+  resources:
+    - resource: secretagentconfigurations
+      name: forgerock-sac
+      apiversion: v1alpha1
+      group: secret-agent.secrets.forgerock.io
+      checks:
+        - expression: 'spec.appConfig.secretsManager != "none"'
+          timeout: 0s
+    - resource: configmaps
+      name: platform-config
+      apiversion: v1
+      group: ""
+      checks:
+        - expression: 'not (data.FQDN contains "example.com")'
+          timeout: 0s
+`)
 
-	"github.com/ForgeRock/forgeops-cli/internal/printer"
+	// DefaultPlatformHealth default definition of the platform
+	DefaultPlatformHealth = []byte(`
+---
+kind: health
+version: v1alpha
+metadata:
+  name: forgerock-platform
+spec:
+  resources:
+    - resource: secretagentconfigurations
+      name: forgerock-sac
+      apiversion: v1alpha1
+      group: secret-agent.secrets.forgerock.io
+      checks:
+        - expression: status.totalManagedObjects == 12
+          timeout: 0s
+        - expression: status.state == "Completed"
+          timeout: 0s
+    - resource: statefulsets
+      name: ds-cts
+      apiversion: v1
+      group: apps
+      checks:
+        - expression: status.readyReplicas == spec.replicas
+          timeout: 0s
+    - resource: statefulsets
+      name: ds-idrepo
+      apiversion: v1
+      group: apps
+      checks:
+        - expression: status.readyReplicas == spec.replicas
+          timeout: 0s
+    - resource: jobs
+      name: amster
+      apiversion: v1
+      group: batch
+      checks:
+        - expression: status.succeeded == spec.completions
+          timeout: 0s
+    - resource: deployments
+      name: am
+      apiversion: v1
+      group: apps
+      checks:
+        - expression: status.availableReplicas >= 1
+          timeout: 0s
+    - resource: deployments
+      name: admin-ui
+      apiversion: v1
+      group: apps
+      checks:
+        - expression: status.availableReplicas == spec.replicas
+          timeout: 0s
+    - resource: deployments
+      name: end-user-ui
+      apiversion: v1
+      group: apps
+      checks:
+        - expression: status.availableReplicas == spec.replicas
+          timeout: 0s
+    - resource: deployments
+      name: login-ui
+      apiversion: v1
+      group: apps
+      checks:
+        - expression: status.availableReplicas == spec.replicas
+          timeout: 0s
+    - resource: statefulsets
+      name: idm
+      apiversion: v1
+      group: apps
+      checks:
+        - expression: status.readyReplicas >= 1
+          timeout: 0s
+`)
 )
-
-type operatorCheck struct {
-	minRequired int
-	readyCount  int
-	installed   bool
-}
-
-// CheckOperators validate operators are installed and running
-func CheckOperators(ctx context.Context, client *kubernetes.Clientset) error {
-	operatorReadyReplicas := map[string]*operatorCheck{
-		"secret-agent-controller-manager": {1, 0, false},
-		"ingress-nginx-controller":        {1, 0, false},
-		"cert-manager":                    {1, 0, false}}
-
-	// Check Installed
-	deploys, err := client.AppsV1().Deployments("").List(ctx, metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-	for _, d := range deploys.Items {
-		if checkStatus, ok := operatorReadyReplicas[d.Name]; ok {
-			checkStatus.readyCount += int(d.Status.ReadyReplicas)
-			checkStatus.installed = true
-		}
-	}
-	operatorErrors := false
-	for operatorName, status := range operatorReadyReplicas {
-		if !status.installed {
-			printer.Warnf("Operator %s is not installed", operatorName)
-			operatorErrors = true
-		} else if status.minRequired > status.readyCount {
-			printer.Warnf("Operator %s installed but has %s ready when %s is required", operatorName, fmt.Sprint(status.readyCount), fmt.Sprint(status.minRequired))
-			operatorErrors = true
-		}
-		printer.Noticef("Operator %s installed and has %s replicas ready", operatorName, fmt.Sprint(status.readyCount))
-	}
-	if operatorErrors {
-		printer.Warnf("Not all operators are installed and ready. Please install them and make sure they are healthy.")
-		return nil
-	}
-	printer.Noticeln("All operators found to be installed and ready.")
-
-	// Check Versions?
-	return nil
-}

@@ -20,7 +20,7 @@ var skipUserConfirmation bool
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "forgeops",
-	Short: "forgeops is a tool for managing ForgeRock platform deployments",
+	Short: "forgeops is a tool for managing ForgeRock Identity Platform deployments",
 	Long: `
     This tool helps deploy the ForgeRock platform, debug common issues, and validate environments.`,
 	DisableAutoGenTag: true,
