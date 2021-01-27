@@ -8,11 +8,9 @@ builds:
     binary: forgeops
     goarch:
       - amd64
-      - arm
       - arm64
     goos:
       - linux
-      - windows
       - darwin
     ldflags:
       - -X github.com/ForgeRock/forgeops-cli/pkg/version.GitCommit={{.Env.GIT_COMMIT}}{{.Env.GIT_DIRTY}} 
