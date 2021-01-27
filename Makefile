@@ -16,7 +16,7 @@ pr-tag:
 	git tag "$(PR_VERSION_NAME)"
 
 snapshot:
-	TAG_NAME=${PR_VERSION_NAME} BUILD_DATE=${BUILD_DATE} GIT_COMMIT=${GIT_COMMIT} GIT_DIRTY=${GIT_DIRTY} goreleaser --snapshot
+	TAG_NAME=${PR_VERSION_NAME} BUILD_DATE=${BUILD_DATE} GIT_COMMIT=${GIT_COMMIT} GIT_DIRTY=${GIT_DIRTY} goreleaser --snapshot --rm-dist
 
 pr-build: pr-tag snapshot
 	@echo "PR Build Completed: gs://engineering-devops_cloudbuild/forgeops-cli-artifacts/$(PR_NUMBER)"
