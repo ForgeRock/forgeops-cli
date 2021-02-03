@@ -6,10 +6,14 @@ import (
 	"github.com/ForgeRock/forgeops-cli/internal/factory"
 	"github.com/ForgeRock/forgeops-cli/internal/k8s"
 	"github.com/ForgeRock/forgeops-cli/internal/printer"
+	"github.com/pkg/errors"
 )
 
-// HealthFromBytes deserialize from bytes
-func HealthFromBytes(hbytes []byte) (*Health, error) {
+// ErrNotAllHealthy not all checks were successful
+var ErrNotAllHealthy error = errors.New("not all checks were successful")
+
+// GetHealthFromBytes deserialize from bytes
+func GetHealthFromBytes(hbytes []byte) (*Health, error) {
 	hlth := &Health{}
 	err := yaml.Unmarshal(hbytes, hlth)
 	if err != nil {
@@ -19,11 +23,11 @@ func HealthFromBytes(hbytes []byte) (*Health, error) {
 }
 
 // Run complete a check on a health object - for CLI based use
-func Run(clientFactory factory.Factory, hlth *Health, allNamespaces bool) error {
+func Run(clientFactory factory.Factory, hlth *Health, allNamespaces bool) (bool, error) {
 	clientMgr := k8s.NewK8sClientMgr(clientFactory)
 	allHealthy, err := hlth.CheckResources(clientMgr, allNamespaces)
 	if err != nil {
-		return err
+		return allHealthy, err
 	}
 	if !allHealthy {
 		numHealthy := len(hlth.healthy)
@@ -36,11 +40,11 @@ func Run(clientFactory factory.Factory, hlth *Health, allNamespaces bool) error 
 		for _, resourceName := range hlth.unhealthy {
 			printer.Warnf("Resource %s is not healthy", resourceName)
 		}
-		return nil
+		return allHealthy, nil
 	}
 	printer.Noticef("Health check %s has passed", hlth.Metadata.Name)
 	for _, resourceName := range hlth.healthy {
 		printer.Noticef("Resource %s is healthy", resourceName)
 	}
-	return nil
+	return allHealthy, nil
 }

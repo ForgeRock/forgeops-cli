@@ -1,32 +1,33 @@
-## forgeops doctor platform
+## forgeops apply ds-operator
 
-Verify that operators are installed and ready
+Apply the ForgeRock DS operator
 
 ### Synopsis
 
 
-		Checks that the platform is running.
-	    
+    Apply the ForgeRock ds-operator:
+    * Apply the latest ds-operator manifest
+    * Use --tag to specify a different ds-operator version to apply
 
 ```
-forgeops doctor platform [flags]
+forgeops apply ds-operator [flags]
 ```
 
 ### Examples
 
 ```
 
-		# validate the platform is running in the current namespace
-		forgeops doctor platform
-		# validate the platform is running in the "prod" namespace
-		forgeops doctor platform -n prod
-		
+      # Apply the "latest" ds-operator.
+      forgeops apply ds-operator
+
+      # Apply a specific version of the ds-operator.
+      forgeops apply ds-operator --tag v0.0.4
 ```
 
 ### Options
 
 ```
-  -h, --help   help for platform
+  -h, --help   help for ds-operator
 ```
 
 ### Options inherited from parent commands
@@ -46,6 +47,7 @@ forgeops doctor platform [flags]
       --password string                Password for basic authentication to the API server
       --request-timeout string         The length of time to wait before giving up on a single server request. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means don't timeout requests. (default "0")
   -s, --server string                  The address and port of the Kubernetes API server
+  -t, --tag string                     Release tag  of the component to be deployed (default "latest")
       --tls-server-name string         Server name to use for server certificate validation. If it is not provided, the hostname used to contact the server is used
       --token string                   Bearer token for authentication to the API server
       --user string                    The name of the kubeconfig user to use
@@ -54,5 +56,5 @@ forgeops doctor platform [flags]
 
 ### SEE ALSO
 
-* [forgeops doctor](forgeops_doctor.md)	 - Diagnose common cluster and platform deployments
+* [forgeops apply](forgeops_apply.md)	 - Apply common platform components
 

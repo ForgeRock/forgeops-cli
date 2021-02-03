@@ -1,13 +1,13 @@
 ## forgeops apply quickstart
 
-Deploy the ForgeRock Cloud Deployment Quickstart (CDQ)
+Apply the ForgeRock Cloud Deployment Quickstart (CDQ)
 
 ### Synopsis
 
 
-    Deploy the ForgeRock Cloud Deployment Quickstart (CDQ):
+    Apply the ForgeRock Cloud Deployment Quickstart (CDQ):
     * Apply the latest quickstart manifest
-    * use --tag to specify a different CDQ version to deploy
+    * Use --tag to specify a different CDQ version to apply
 
 ```
 forgeops apply quickstart [flags]
@@ -17,23 +17,23 @@ forgeops apply quickstart [flags]
 
 ```
 
-      # Deploy the "latest" CDQ in the "default" namespace.
+      # Apply the "latest" CDQ in the "default" namespace.
       forgeops apply quickstart
     
-      # Deploy the CDQ in the "default" namespace.
+      # Apply the CDQ in the "default" namespace.
       forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci
       
-      # Deploy the CDQ in a given namespace.
+      # Apply the CDQ in a given namespace.
       forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace
       
-      # Deploy the CDQ with a custom FQDN.
+      # Apply the CDQ with a custom FQDN.
       forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace --fqdn demo.customdomain.com
 ```
 
 ### Options
 
 ```
-      --fqdn string   FQDN for CDQ deployment. (default "[NAMESPACE].iam.example.com")
+      --fqdn string   FQDN used in the deployment. (default "[NAMESPACE].iam.example.com")
   -h, --help          help for quickstart
 ```
 
@@ -42,7 +42,7 @@ forgeops apply quickstart [flags]
 ```
       --as string                      Username to impersonate for the operation
       --as-group stringArray           Group to impersonate for the operation, this flag can be repeated to specify multiple groups.
-      --cache-dir string               Default cache directory (default "/home/max/.kube/cache")
+      --cache-dir string               Default cache directory (default "/home/jcastillo/.kube/cache")
       --certificate-authority string   Path to a cert file for the certificate authority
       --client-certificate string      Path to a client certificate file for TLS
       --client-key string              Path to a client key file for TLS
@@ -63,5 +63,5 @@ forgeops apply quickstart [flags]
 
 ### SEE ALSO
 
-* [forgeops apply](forgeops_apply.md)	 - Deploy common platform components
+* [forgeops apply](forgeops_apply.md)	 - Apply common platform components
 

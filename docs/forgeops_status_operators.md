@@ -1,32 +1,33 @@
-## forgeops doctor platform
+## forgeops status operators
 
 Verify that operators are installed and ready
 
 ### Synopsis
 
 
-		Checks that the platform is running.
+	    Checks to ensure that required operators are installed and ready.
 	    
 
 ```
-forgeops doctor platform [flags]
+forgeops status operators [flags]
 ```
 
 ### Examples
 
 ```
 
-		# validate the platform is running in the current namespace
-		forgeops doctor platform
-		# validate the platform is running in the "prod" namespace
-		forgeops doctor platform -n prod
+		# check for operators in any namespaces
+		forgeops status operators
+		# check for operators in single namespace
+		forgeops status operators --all-namespaces=false
 		
 ```
 
 ### Options
 
 ```
-  -h, --help   help for platform
+  -A, --all-namespaces   If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace. (default true)
+  -h, --help             help for operators
 ```
 
 ### Options inherited from parent commands
@@ -54,5 +55,5 @@ forgeops doctor platform [flags]
 
 ### SEE ALSO
 
-* [forgeops doctor](forgeops_doctor.md)	 - Diagnose common cluster and platform deployments
+* [forgeops status](forgeops_status.md)	 - Diagnose common cluster and platform deployments
 

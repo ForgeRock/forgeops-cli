@@ -1,11 +1,11 @@
 ## forgeops delete
 
-Remove common platform components
+Delete common platform components
 
 ### Synopsis
 
 
-    Remove common platform components
+    Delete common platform components
 
 ### Examples
 
@@ -26,7 +26,7 @@ Remove common platform components
 ```
       --as string                      Username to impersonate for the operation
       --as-group stringArray           Group to impersonate for the operation, this flag can be repeated to specify multiple groups.
-      --cache-dir string               Default cache directory (default "/home/max/.kube/cache")
+      --cache-dir string               Default cache directory (default "/home/jcastillo/.kube/cache")
       --certificate-authority string   Path to a cert file for the certificate authority
       --client-certificate string      Path to a client certificate file for TLS
       --client-key string              Path to a client key file for TLS
@@ -39,7 +39,7 @@ Remove common platform components
       --password string                Password for basic authentication to the API server
       --request-timeout string         The length of time to wait before giving up on a single server request. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means don't timeout requests. (default "0")
   -s, --server string                  The address and port of the Kubernetes API server
-  -t, --tag string                     Release tag  of the component to be deployed
+  -t, --tag string                     Release tag of the component to be deleted (default "latest")
       --tls-server-name string         Server name to use for server certificate validation. If it is not provided, the hostname used to contact the server is used
       --token string                   Bearer token for authentication to the API server
       --user string                    The name of the kubeconfig user to use
@@ -49,8 +49,11 @@ Remove common platform components
 
 ### SEE ALSO
 
-* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock platform deployments
-* [forgeops delete ds](forgeops_delete_ds.md)	 - Remove the ForgeRock DS operator
-* [forgeops delete quickstart](forgeops_delete_quickstart.md)	 - Remove the ForgeRock Cloud Deployment Quickstart (CDQ)
-* [forgeops delete secret-agent](forgeops_delete_secret-agent.md)	 - Remove the ForgeRock Secret Agent
+* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock Identity Platform deployments
+* [forgeops delete apps](forgeops_delete_apps.md)	 - Delete the ForgeRock apps (AM, IDM, UI)
+* [forgeops delete base](forgeops_delete_base.md)	 - Delete the ForgeRock base resources
+* [forgeops delete directory](forgeops_delete_directory.md)	 - Delete the ForgeRock DS resources
+* [forgeops delete ds-operator](forgeops_delete_ds-operator.md)	 - Delete the ForgeRock DS operator
+* [forgeops delete quickstart](forgeops_delete_quickstart.md)	 - Delete the ForgeRock Cloud Deployment Quickstart (CDQ)
+* [forgeops delete secret-agent](forgeops_delete_secret-agent.md)	 - Delete the ForgeRock Secret Agent
 

@@ -26,7 +26,7 @@ forgeops doctor operators [flags]
 ### Options
 
 ```
-  -A, --all-namespaces   Default: true. If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace. (default true)
+  -A, --all-namespaces   If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace. (default true)
   -h, --help             help for operators
 ```
 
@@ -35,7 +35,7 @@ forgeops doctor operators [flags]
 ```
       --as string                      Username to impersonate for the operation
       --as-group stringArray           Group to impersonate for the operation, this flag can be repeated to specify multiple groups.
-      --cache-dir string               Default cache directory (default "/home/max/.kube/cache")
+      --cache-dir string               Default cache directory (default "/home/jcastillo/.kube/cache")
       --certificate-authority string   Path to a cert file for the certificate authority
       --client-certificate string      Path to a client certificate file for TLS
       --client-key string              Path to a client key file for TLS

@@ -16,5 +16,5 @@ forgeops docs [flags]
 
 ### SEE ALSO
 
-* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock platform deployments
+* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock Identity Platform deployments
 

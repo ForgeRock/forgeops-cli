@@ -1,26 +1,26 @@
 ## forgeops apply
 
-Deploy common platform components
+Apply common platform components
 
 ### Synopsis
 
 
-	Deploy common platform components
+	Apply common platform components
 
 ### Examples
 
 ```
 
-    # Deploy the "latest" ds-operator.
-    forgeops apply ds
+    # Apply the "latest" ds-operator.
+    forgeops apply ds-operator
 
-    # Deploy the "latest" secret-agent.
+    # Apply the "latest" secret-agent.
     forgeops apply sa
 
-    # Deploy the CDQ in a given namespace.
+    # Apply the CDQ in a given namespace.
     forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace
     
-    # Deploy the CDQ with a custom FQDN.
+    # Apply the CDQ with a custom FQDN.
     forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace --fqdn demo.customdomain.com
 ```
 
@@ -29,7 +29,7 @@ Deploy common platform components
 ```
       --as string                      Username to impersonate for the operation
       --as-group stringArray           Group to impersonate for the operation, this flag can be repeated to specify multiple groups.
-      --cache-dir string               Default cache directory (default "/home/max/.kube/cache")
+      --cache-dir string               Default cache directory (default "/home/jcastillo/.kube/cache")
       --certificate-authority string   Path to a cert file for the certificate authority
       --client-certificate string      Path to a client certificate file for TLS
       --client-key string              Path to a client key file for TLS
@@ -51,8 +51,11 @@ Deploy common platform components
 
 ### SEE ALSO
 
-* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock platform deployments
-* [forgeops apply ds](forgeops_apply_ds.md)	 - Deploy the ForgeRock DS operator
-* [forgeops apply quickstart](forgeops_apply_quickstart.md)	 - Deploy the ForgeRock Cloud Deployment Quickstart (CDQ)
-* [forgeops apply secret-agent](forgeops_apply_secret-agent.md)	 - Deploy the ForgeRock Secret Agent
+* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock Identity Platform deployments
+* [forgeops apply apps](forgeops_apply_apps.md)	 - Apply the ForgeRock apps (AM, IDM, UI)
+* [forgeops apply base](forgeops_apply_base.md)	 - Apply the ForgeRock base resources
+* [forgeops apply directory](forgeops_apply_directory.md)	 - Apply the ForgeRock DS resources
+* [forgeops apply ds-operator](forgeops_apply_ds-operator.md)	 - Apply the ForgeRock DS operator
+* [forgeops apply quickstart](forgeops_apply_quickstart.md)	 - Apply the ForgeRock Cloud Deployment Quickstart (CDQ)
+* [forgeops apply secret-agent](forgeops_apply_secret-agent.md)	 - Apply the ForgeRock Secret Agent
 

@@ -1,13 +1,13 @@
 ## forgeops apply secret-agent
 
-Deploy the ForgeRock Secret Agent
+Apply the ForgeRock Secret Agent
 
 ### Synopsis
 
 
-    Deploy the ForgeRock secret-agent:
+    Apply the ForgeRock secret-agent:
     * Apply the latest secret-agent manifest
-    * use --tag to specify a different secret-agent version to deploy
+    * Use --tag to specify a different secret-agent version to apply
 
 ```
 forgeops apply secret-agent [flags]
@@ -17,10 +17,10 @@ forgeops apply secret-agent [flags]
 
 ```
 
-      # Deploy the "latest" secret-agent.
+      # Apply the "latest" secret-agent.
       forgeops apply sa
 
-      # Deploy a specific version of the secret-agent.
+      # Apply a specific version of the secret-agent.
       forgeops apply sa --tag v0.2.1
 ```
 
@@ -35,7 +35,7 @@ forgeops apply secret-agent [flags]
 ```
       --as string                      Username to impersonate for the operation
       --as-group stringArray           Group to impersonate for the operation, this flag can be repeated to specify multiple groups.
-      --cache-dir string               Default cache directory (default "/home/max/.kube/cache")
+      --cache-dir string               Default cache directory (default "/home/jcastillo/.kube/cache")
       --certificate-authority string   Path to a cert file for the certificate authority
       --client-certificate string      Path to a client certificate file for TLS
       --client-key string              Path to a client key file for TLS
@@ -56,5 +56,5 @@ forgeops apply secret-agent [flags]
 
 ### SEE ALSO
 
-* [forgeops apply](forgeops_apply.md)	 - Deploy common platform components
+* [forgeops apply](forgeops_apply.md)	 - Apply common platform components
 

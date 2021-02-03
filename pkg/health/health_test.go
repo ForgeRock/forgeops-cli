@@ -38,7 +38,7 @@ func newHealthFromResources(resources []tResource) *Health {
 			Name:       r.rname,
 			Namespace:  "test_namespace",
 			Checks: []*Check{
-				&Check{
+				{
 					Expression: "status.state == \"Completed\"",
 					Timeout:    metav1.Duration{Duration: 1 * time.Second},
 				},
@@ -68,8 +68,8 @@ func TestHealthyLogic(t *testing.T) {
 		// multiple passing
 		{
 			resources: []tResource{
-				tResource{"r1", true, nil},
-				tResource{"r2", true, nil},
+				{"r1", true, nil},
+				{"r2", true, nil},
 			},
 			expect:      true,
 			expectedErr: nil,
@@ -77,8 +77,8 @@ func TestHealthyLogic(t *testing.T) {
 		// a resource times out, should only be unhealthy
 		{
 			resources: []tResource{
-				tResource{"r1", true, nil},
-				tResource{"r2", true, k8s.ErrWatchTimeout},
+				{"r1", true, nil},
+				{"r2", true, k8s.ErrWatchTimeout},
 			},
 			expect:      false,
 			expectedErr: nil,
@@ -86,8 +86,8 @@ func TestHealthyLogic(t *testing.T) {
 		// errors return err
 		{
 			resources: []tResource{
-				tResource{"r2", true, errors.New("test error")},
-				tResource{"r1", false, nil},
+				{"r2", true, errors.New("test error")},
+				{"r1", false, nil},
 			},
 			expect:      false,
 			expectedErr: nil,
@@ -95,8 +95,8 @@ func TestHealthyLogic(t *testing.T) {
 		// all unhealthy
 		{
 			resources: []tResource{
-				tResource{"r1", false, nil},
-				tResource{"r2", false, nil},
+				{"r1", false, nil},
+				{"r2", false, nil},
 			},
 			expect:      false,
 			expectedErr: nil,
@@ -104,8 +104,8 @@ func TestHealthyLogic(t *testing.T) {
 		// some unhealthy
 		{
 			resources: []tResource{
-				tResource{"r1", false, nil},
-				tResource{"r2", true, nil},
+				{"r1", false, nil},
+				{"r2", true, nil},
 			},
 			expect:      false,
 			expectedErr: nil,

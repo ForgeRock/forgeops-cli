@@ -11,9 +11,9 @@ import (
 	"github.com/ForgeRock/forgeops-cli/internal/k8s"
 )
 
+// ErrExpressionResult only boolean expressions are permitted
 var ErrExpressionResult error = errors.New("only boolean expressions are permitted")
 
-// &metav1.Duration{Duration: 100 * 365 * 24 * time.Hour}
 // Check expression to be evaluated against a resource
 type Check struct {
 	// https://github.com/antonmedv/expr/blob/master/docs/Language-Definition.md
