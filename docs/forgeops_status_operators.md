@@ -1,29 +1,33 @@
-## forgeops delete ds
+## forgeops status operators
 
-Remove the ForgeRock DS operator
+Verify that operators are installed and ready
 
 ### Synopsis
 
 
-    Remove the ForgeRock ds-operator:
-    * Delete the ds-operator deployment
+	    Checks to ensure that required operators are installed and ready.
+	    
 
 ```
-forgeops delete ds [flags]
+forgeops status operators [flags]
 ```
 
 ### Examples
 
 ```
 
-    # Delete the ds-operator from the cluster.
-    forgeops delete ds
+		# check for operators in any namespaces
+		forgeops status operators
+		# check for operators in single namespace
+		forgeops status operators --all-namespaces=false
+		
 ```
 
 ### Options
 
 ```
-  -h, --help   help for ds
+  -A, --all-namespaces   Default: true. If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace. (default true)
+  -h, --help             help for operators
 ```
 
 ### Options inherited from parent commands
@@ -31,7 +35,7 @@ forgeops delete ds [flags]
 ```
       --as string                      Username to impersonate for the operation
       --as-group stringArray           Group to impersonate for the operation, this flag can be repeated to specify multiple groups.
-      --cache-dir string               Default cache directory (default "/home/max/.kube/cache")
+      --cache-dir string               Default cache directory (default "/home/jcastillo/.kube/cache")
       --certificate-authority string   Path to a cert file for the certificate authority
       --client-certificate string      Path to a client certificate file for TLS
       --client-key string              Path to a client key file for TLS
@@ -43,15 +47,13 @@ forgeops delete ds [flags]
       --password string                Password for basic authentication to the API server
       --request-timeout string         The length of time to wait before giving up on a single server request. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means don't timeout requests. (default "0")
   -s, --server string                  The address and port of the Kubernetes API server
-  -t, --tag string                     Release tag  of the component to be deployed
       --tls-server-name string         Server name to use for server certificate validation. If it is not provided, the hostname used to contact the server is used
       --token string                   Bearer token for authentication to the API server
       --user string                    The name of the kubeconfig user to use
       --username string                Username for basic authentication to the API server
-  -y, --yes                            Do not prompt for confirmation
 ```
 
 ### SEE ALSO
 
-* [forgeops delete](forgeops_delete.md)	 - Remove common platform components
+* [forgeops status](forgeops_status.md)	 - Diagnose common cluster and platform deployments
 

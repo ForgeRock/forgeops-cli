@@ -1,4 +1,4 @@
-## forgeops doctor platform
+## forgeops status platform
 
 Verify that operators are installed and ready
 
@@ -9,7 +9,7 @@ Verify that operators are installed and ready
 	    
 
 ```
-forgeops doctor platform [flags]
+forgeops status platform [flags]
 ```
 
 ### Examples
@@ -17,9 +17,9 @@ forgeops doctor platform [flags]
 ```
 
 		# validate the platform is running in the current namespace
-		forgeops doctor platform
+		forgeops status platform
 		# validate the platform is running in the "prod" namespace
-		forgeops doctor platform -n prod
+		forgeops status platform -n prod
 		
 ```
 
@@ -54,5 +54,5 @@ forgeops doctor platform [flags]
 
 ### SEE ALSO
 
-* [forgeops doctor](forgeops_doctor.md)	 - Diagnose common cluster and platform deployments
+* [forgeops status](forgeops_status.md)	 - Diagnose common cluster and platform deployments
 

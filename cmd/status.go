@@ -10,26 +10,20 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
 var (
 	// cmd globals config
-	kubeConfig    string
-	overrides     = &clientcmd.ConfigOverrides{}
-	ctx           context.Context
-	doctorFlags   *genericclioptions.ConfigFlags
-	operatorFlags *genericclioptions.ConfigFlags
-	allNamespaces bool
+	statusFlags *genericclioptions.ConfigFlags
 
-	ds = &cobra.Command{
+	dsStatus = &cobra.Command{
 		Use:   "directoryserver",
 		Short: "Check the status of Directory Server deployment",
 		Long: `
-	Check the status of Directory Server deployment by checking ready state and configuration.
-	  * check workload state
-	  * should we call an endpoint/ldap?
-	`,
+	    Check the status of Directory Server deployment by checking ready state and configuration.
+	    * check workload state
+	    * should we call an endpoint/ldap?
+	    `,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			printer.Warnln("Not implemented")
 			return nil
@@ -39,7 +33,7 @@ var (
 		SilenceUsage:      true,
 	}
 
-	platform = &cobra.Command{
+	platformStatus = &cobra.Command{
 		Use:   "platform",
 		Short: "Verify that operators are installed and ready",
 		Long: `
@@ -47,9 +41,9 @@ var (
 	    `,
 		Example: `
 		# validate the platform is running in the current namespace
-		forgeops doctor platform
+		forgeops status platform
 		# validate the platform is running in the "prod" namespace
-		forgeops doctor platform -n prod
+		forgeops status platform -n prod
 		`,
 		DisableAutoGenTag: true,
 		SilenceUsage:      true,
@@ -63,11 +57,12 @@ var (
 				return err
 			}
 
-			_, confErr := health.Run(clientFactory, configHealth, true)
-			_, platErr := health.Run(clientFactory, platformHlth, false)
+			confAllHealthy, confErr := health.Run(clientFactory, configHealth, true)
+			platAllHealthy, platErr := health.Run(clientFactory, platformHlth, false)
 			if confErr != nil && platErr != nil {
 				return errors.Wrap(confErr, platErr.Error())
-
+			} else if !confAllHealthy || !platAllHealthy {
+				return health.ErrNotAllHealthy
 			} else if confErr != nil {
 				return confErr
 			} else if platErr != nil {
@@ -77,7 +72,7 @@ var (
 		},
 	}
 
-	operators = &cobra.Command{
+	operatorsStatus = &cobra.Command{
 		Use:     "operators",
 		Aliases: []string{"op", "operator"},
 		Short:   "Verify that operators are installed and ready",
@@ -88,9 +83,9 @@ var (
 		SilenceUsage:      true,
 		Example: `
 		# check for operators in any namespaces
-		forgeops doctor operators
+		forgeops status operators
 		# check for operators in single namespace
-		forgeops doctor operators --all-namespaces=false
+		forgeops status operators --all-namespaces=false
 		`,
 
 		// Configure Client Mgr for all subcommands
@@ -99,13 +94,16 @@ var (
 			if err != nil {
 				return err
 			}
-			_, err = health.Run(clientFactory, hlth, allNamespaces)
+			operAllHealthy, err := health.Run(clientFactory, hlth, allNamespaces)
+			if !operAllHealthy {
+				return health.ErrNotAllHealthy
+			}
 			return err
 		},
 	}
 
-	doctorCmd = &cobra.Command{
-		Use:               "doctor",
+	statusCmd = &cobra.Command{
+		Use:               "status",
 		Aliases:           []string{"dr"},
 		DisableAutoGenTag: true,
 		SilenceUsage:      true,
@@ -115,7 +113,7 @@ var (
 		`,
 		Example: `
 		# run all health checks
-		forgeops doctor
+		forgeops status
 		`,
 		// Configure Client Mgr for all subcommands
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -132,11 +130,12 @@ var (
 				return err
 			}
 
-			_, operErr := health.Run(clientFactory, operatorHlth, true)
-			_, platErr := health.Run(clientFactory, platformHlth, false)
+			operAllHealthy, operErr := health.Run(clientFactory, operatorHlth, true)
+			platAllHealthy, platErr := health.Run(clientFactory, platformHlth, false)
 			if operErr != nil && platErr != nil {
 				return errors.Wrap(operErr, platErr.Error())
-
+			} else if !operAllHealthy || !platAllHealthy {
+				return health.ErrNotAllHealthy
 			} else if operErr != nil {
 				return operErr
 			} else if platErr != nil {
@@ -151,18 +150,14 @@ func init() {
 	ctx = context.Background()
 
 	// Install k8s flags
-	doctorFlags = initK8sFlags(doctorCmd.PersistentFlags())
+	statusFlags = initK8sFlags(statusCmd.PersistentFlags())
 
-	// operators
-	operators.PersistentFlags().BoolVarP(&allNamespaces, "all-namespaces", "A", true, "Default: true. If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace.")
+	operatorsStatus.PersistentFlags().BoolVarP(&allNamespaces, "all-namespaces", "A", true, "Default: true. If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even if specified with --namespace.")
 
-	//	platform
-	platform.AddCommand(ds)
-
-	// module command
-	doctorCmd.AddCommand(operators)
-	doctorCmd.AddCommand(platform)
+	platformStatus.AddCommand(dsStatus)
+	statusCmd.AddCommand(operatorsStatus)
+	statusCmd.AddCommand(platformStatus)
 
 	// root command
-	rootCmd.AddCommand(doctorCmd)
+	rootCmd.AddCommand(statusCmd)
 }

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/ForgeRock/forgeops-cli/internal/factory"
+	"github.com/ForgeRock/forgeops-cli/internal/printer"
 	"github.com/ForgeRock/forgeops-cli/pkg/delete"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -51,15 +52,15 @@ var deleteSecretAgent = &cobra.Command{
 }
 
 var deleteDsOperator = &cobra.Command{
-	Use:     "ds",
-	Aliases: []string{"ds-operator"},
+	Use:     "ds-operator",
+	Aliases: []string{"dso"},
 	Short:   "Remove the ForgeRock DS operator",
 	Long: `
     Remove the ForgeRock ds-operator:
     * Delete the ds-operator deployment`,
 	Example: `
     # Delete the ds-operator from the cluster.
-    forgeops delete ds`,
+    forgeops delete ds-operator`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := delete.GHResource(clientFactory, "ForgeRock/ds-operator", "ds-operator.yaml", tag, true, skipUserConfirmation)
 		return err
@@ -68,6 +69,68 @@ var deleteDsOperator = &cobra.Command{
 	DisableAutoGenTag: true,
 }
 
+var deleteForgeopsBase = &cobra.Command{
+	Use:     "base",
+	Aliases: []string{"fb"},
+	Short:   "Remove the ForgeRock base resources",
+	Long: `
+    Remove the base resources of the ForgeRock cloud deployment:
+    * Delete the base resources of ForgeRock cloud deployment`,
+	Example: `
+      # Remove the base resources from the "default" namespace.
+      forgeops delete base
+
+      # Delete the base resources from a given namespace.
+      forgeops delete base --namespace mynamespace`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		printer.Noticeln("This command is not implemented yet")
+		return nil
+	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
+}
+
+var deleteForgeopsDirectory = &cobra.Command{
+	Use:     "directory",
+	Aliases: []string{"fd"},
+	Short:   "Remove the ForgeRock DS resources",
+	Long: `
+    Remove the directory service resources of the ForgeRock cloud deployment:
+    * Delete the directory service resources of ForgeRock cloud deployment`,
+	Example: `
+      # Remove the directory service resources from the "default" namespace.
+      forgeops delete directory
+
+      # Delete the directory service resources from a given namespace.
+      forgeops delete directory --namespace mynamespace`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		printer.Noticeln("This command is not implemented yet")
+		return nil
+	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
+}
+
+var deleteForgeopsApps = &cobra.Command{
+	Use:     "apps",
+	Aliases: []string{"fa"},
+	Short:   "Remove the ForgeRock apps (AM, IDM, UI)",
+	Long: `
+    Remove the ForgeRock apps (AM, IDM, UI):
+    * Delete the ForgeRock apps`,
+	Example: `
+      # Remove the ForgeRock apps from the "default" namespace.
+      forgeops delete apps
+
+      # Delete the ForgeRock apps from a given namespace.
+      forgeops delete apps --namespace mynamespace`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		printer.Noticeln("This command is not implemented yet")
+		return nil
+	},
+	SilenceUsage:      true,
+	DisableAutoGenTag: true,
+}
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Remove common platform components",
@@ -101,6 +164,9 @@ func init() {
 	deleteCmd.AddCommand(deleteQuickstart)
 	deleteCmd.AddCommand(deleteSecretAgent)
 	deleteCmd.AddCommand(deleteDsOperator)
+	deleteCmd.AddCommand(deleteForgeopsBase)
+	deleteCmd.AddCommand(deleteForgeopsDirectory)
+	deleteCmd.AddCommand(deleteForgeopsApps)
 
 	rootCmd.AddCommand(deleteCmd)
 }

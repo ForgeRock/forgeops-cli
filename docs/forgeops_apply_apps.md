@@ -1,32 +1,33 @@
-## forgeops doctor platform
+## forgeops apply apps
 
-Verify that operators are installed and ready
+Deploy the ForgeRock apps (AM, IDM, UI)
 
 ### Synopsis
 
 
-		Checks that the platform is running.
-	    
+    Deploy the ForgeRock apps (AM, IDM, UI):
+    * Apply the ForgeRock apps
+    * use --tag to specify a different version to deploy
 
 ```
-forgeops doctor platform [flags]
+forgeops apply apps [flags]
 ```
 
 ### Examples
 
 ```
 
-		# validate the platform is running in the current namespace
-		forgeops doctor platform
-		# validate the platform is running in the "prod" namespace
-		forgeops doctor platform -n prod
-		
+      # Deploy the ForgeRock apps listed in the "latest" release of Forgeops.
+      forgeops apply apps
+
+      # Deploy the ForgeRock apps listed in a specific release of Forgeops.
+      forgeops apply apps --tag 2020.10.28-AlSugoDiNoci
 ```
 
 ### Options
 
 ```
-  -h, --help   help for platform
+  -h, --help   help for apps
 ```
 
 ### Options inherited from parent commands
@@ -46,6 +47,7 @@ forgeops doctor platform [flags]
       --password string                Password for basic authentication to the API server
       --request-timeout string         The length of time to wait before giving up on a single server request. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means don't timeout requests. (default "0")
   -s, --server string                  The address and port of the Kubernetes API server
+  -t, --tag string                     Release tag  of the component to be deployed (default "latest")
       --tls-server-name string         Server name to use for server certificate validation. If it is not provided, the hostname used to contact the server is used
       --token string                   Bearer token for authentication to the API server
       --user string                    The name of the kubeconfig user to use
@@ -54,5 +56,5 @@ forgeops doctor platform [flags]
 
 ### SEE ALSO
 
-* [forgeops doctor](forgeops_doctor.md)	 - Diagnose common cluster and platform deployments
+* [forgeops apply](forgeops_apply.md)	 - Deploy common platform components
 

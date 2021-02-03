@@ -1,11 +1,11 @@
 ## forgeops clean
 
-Remove any remaining ForgeRock components from the given namespace
+Remove any remaining platform components from the given namespace
 
 ### Synopsis
 
 
-    Remove any remaining ForgeRock components from the given namespace
+    Remove any remaining platform components from the given namespace
 
 ```
 forgeops clean [flags]
@@ -16,7 +16,7 @@ forgeops clean [flags]
 ```
       --as string                      Username to impersonate for the operation
       --as-group stringArray           Group to impersonate for the operation, this flag can be repeated to specify multiple groups.
-      --cache-dir string               Default cache directory (default "/home/max/.kube/cache")
+      --cache-dir string               Default cache directory (default "/home/jcastillo/.kube/cache")
       --certificate-authority string   Path to a cert file for the certificate authority
       --client-certificate string      Path to a client certificate file for TLS
       --client-key string              Path to a client key file for TLS
@@ -38,5 +38,5 @@ forgeops clean [flags]
 
 ### SEE ALSO
 
-* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock platform deployments
+* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock Identity Platform deployments
 

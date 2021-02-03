@@ -26,7 +26,7 @@ Remove common platform components
 ```
       --as string                      Username to impersonate for the operation
       --as-group stringArray           Group to impersonate for the operation, this flag can be repeated to specify multiple groups.
-      --cache-dir string               Default cache directory (default "/home/max/.kube/cache")
+      --cache-dir string               Default cache directory (default "/home/jcastillo/.kube/cache")
       --certificate-authority string   Path to a cert file for the certificate authority
       --client-certificate string      Path to a client certificate file for TLS
       --client-key string              Path to a client key file for TLS
@@ -49,8 +49,11 @@ Remove common platform components
 
 ### SEE ALSO
 
-* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock platform deployments
-* [forgeops delete ds](forgeops_delete_ds.md)	 - Remove the ForgeRock DS operator
+* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock Identity Platform deployments
+* [forgeops delete apps](forgeops_delete_apps.md)	 - Remove the ForgeRock apps (AM, IDM, UI)
+* [forgeops delete base](forgeops_delete_base.md)	 - Remove the ForgeRock base resources
+* [forgeops delete directory](forgeops_delete_directory.md)	 - Remove the ForgeRock DS resources
+* [forgeops delete ds-operator](forgeops_delete_ds-operator.md)	 - Remove the ForgeRock DS operator
 * [forgeops delete quickstart](forgeops_delete_quickstart.md)	 - Remove the ForgeRock Cloud Deployment Quickstart (CDQ)
 * [forgeops delete secret-agent](forgeops_delete_secret-agent.md)	 - Remove the ForgeRock Secret Agent
 

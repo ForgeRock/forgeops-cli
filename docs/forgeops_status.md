@@ -1,35 +1,27 @@
-## forgeops doctor platform
+## forgeops status
 
-Verify that operators are installed and ready
+Diagnose common cluster and platform deployments
 
 ### Synopsis
 
 
-		Checks that the platform is running.
-	    
+		Diagnose issues related to running and deploying the ForgeRock platform.
+		
 
 ```
-forgeops doctor platform [flags]
+forgeops status [flags]
 ```
 
 ### Examples
 
 ```
 
-		# validate the platform is running in the current namespace
-		forgeops doctor platform
-		# validate the platform is running in the "prod" namespace
-		forgeops doctor platform -n prod
+		# run all health checks
+		forgeops status
 		
 ```
 
 ### Options
-
-```
-  -h, --help   help for platform
-```
-
-### Options inherited from parent commands
 
 ```
       --as string                      Username to impersonate for the operation
@@ -40,6 +32,7 @@ forgeops doctor platform [flags]
       --client-key string              Path to a client key file for TLS
       --cluster string                 The name of the kubeconfig cluster to use
       --context string                 The name of the kubeconfig context to use
+  -h, --help                           help for status
       --insecure-skip-tls-verify       If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure
       --kubeconfig string              Path to the kubeconfig file to use for CLI requests.
   -n, --namespace string               If present, the namespace scope for this CLI request
@@ -54,5 +47,7 @@ forgeops doctor platform [flags]
 
 ### SEE ALSO
 
-* [forgeops doctor](forgeops_doctor.md)	 - Diagnose common cluster and platform deployments
+* [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock Identity Platform deployments
+* [forgeops status operators](forgeops_status_operators.md)	 - Verify that operators are installed and ready
+* [forgeops status platform](forgeops_status_platform.md)	 - Verify that operators are installed and ready
 
