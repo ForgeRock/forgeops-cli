@@ -22,7 +22,10 @@ jobs:
     - name: go-fmt
       run: go fmt ./...
 
-    - name: Check for uncommited formatting
+    - name: Generate cobra docs
+      run: go run main.go docs
+
+    - name: Check for uncommited files
       run: if [ -n "$(git status --untracked-files=no --porcelain)" ]; then echo "There are uncommitted changes"; exit 1; fi
     
     - name: Run tests
