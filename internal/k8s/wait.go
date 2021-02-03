@@ -15,15 +15,17 @@ import (
 	watchtools "k8s.io/client-go/tools/watch"
 )
 
+// ErrWatchTimeout wait timeout
 var ErrWatchTimeout error = errors.New("wait timeout")
 
+// ConditionFunction defines the conditions used to evaluate watch events
 type ConditionFunction func(event watch.Event, obj *unstructured.Unstructured) (bool, error)
 
 // WatchEventsForCondition sets a watch for events and evaluatest the provided ConditionFunction
 func (cmgr clientMgr) WatchEventsForCondition(timeoutSecs int, ns, name string, gvr schema.GroupVersionResource, condition ConditionFunction) (bool, error) {
 	for {
 		endTime := time.Now().Add(time.Duration(timeoutSecs) * time.Second)
-		dynamicClient, err := cmgr.DynamicClient()
+		dynamicClient, err := cmgr.factory.DynamicClient()
 		if err != nil {
 			return false, err
 		}

@@ -5,18 +5,13 @@ package mocks
 import (
 	io "io"
 
-	genericclioptions "k8s.io/cli-runtime/pkg/genericclioptions"
-	dynamic "k8s.io/client-go/dynamic"
+	factory "github.com/ForgeRock/forgeops-cli/internal/factory"
 
 	k8s "github.com/ForgeRock/forgeops-cli/internal/k8s"
-
-	kubernetes "k8s.io/client-go/kubernetes"
 
 	mock "github.com/stretchr/testify/mock"
 
 	resource "k8s.io/cli-runtime/pkg/resource"
-
-	rest "k8s.io/client-go/rest"
 
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 )
@@ -40,22 +35,6 @@ func (_m *ClientMgr) ApplyObject(info *resource.Info) error {
 	return r0
 }
 
-// Builder provides a mock function with given fields:
-func (_m *ClientMgr) Builder() *resource.Builder {
-	ret := _m.Called()
-
-	var r0 *resource.Builder
-	if rf, ok := ret.Get(0).(func() *resource.Builder); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*resource.Builder)
-		}
-	}
-
-	return r0
-}
-
 // DeleteObject provides a mock function with given fields: info
 func (_m *ClientMgr) DeleteObject(info *resource.Info) error {
 	ret := _m.Called(info)
@@ -70,27 +49,20 @@ func (_m *ClientMgr) DeleteObject(info *resource.Info) error {
 	return r0
 }
 
-// DynamicClient provides a mock function with given fields:
-func (_m *ClientMgr) DynamicClient() (dynamic.Interface, error) {
+// Factory provides a mock function with given fields:
+func (_m *ClientMgr) Factory() factory.Factory {
 	ret := _m.Called()
 
-	var r0 dynamic.Interface
-	if rf, ok := ret.Get(0).(func() dynamic.Interface); ok {
+	var r0 factory.Factory
+	if rf, ok := ret.Get(0).(func() factory.Factory); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(dynamic.Interface)
+			r0 = ret.Get(0).(factory.Factory)
 		}
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
 // GetObjectsFromPath provides a mock function with given fields: path
@@ -162,29 +134,6 @@ func (_m *ClientMgr) GetObjectsFromStream(reader io.Reader) ([]*resource.Info, e
 	return r0, r1
 }
 
-// GetOverrideFlags provides a mock function with given fields:
-func (_m *ClientMgr) GetOverrideFlags() (*genericclioptions.ConfigFlags, error) {
-	ret := _m.Called()
-
-	var r0 *genericclioptions.ConfigFlags
-	if rf, ok := ret.Get(0).(func() *genericclioptions.ConfigFlags); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*genericclioptions.ConfigFlags)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // Namespace provides a mock function with given fields:
 func (_m *ClientMgr) Namespace() (string, error) {
 	ret := _m.Called()
@@ -194,52 +143,6 @@ func (_m *ClientMgr) Namespace() (string, error) {
 		r0 = rf()
 	} else {
 		r0 = ret.Get(0).(string)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// RestConfig provides a mock function with given fields:
-func (_m *ClientMgr) RestConfig() (*rest.Config, error) {
-	ret := _m.Called()
-
-	var r0 *rest.Config
-	if rf, ok := ret.Get(0).(func() *rest.Config); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*rest.Config)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// StaticClient provides a mock function with given fields:
-func (_m *ClientMgr) StaticClient() (*kubernetes.Clientset, error) {
-	ret := _m.Called()
-
-	var r0 *kubernetes.Clientset
-	if rf, ok := ret.Get(0).(func() *kubernetes.Clientset); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*kubernetes.Clientset)
-		}
 	}
 
 	var r1 error

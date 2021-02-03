@@ -20,13 +20,13 @@ import (
 // NewK8sClientMgr create a new instance of NewK8sClientMgr
 func NewK8sClientMgr(f factory.Factory) ClientMgr {
 	return &clientMgr{
-		f,
+		factory: f,
 	}
 }
 
 // ClientMgr a container for creating kubernetes rest clients
 type ClientMgr interface {
-	factory.Factory
+	Factory() factory.Factory
 	Namespace() (string, error)
 	GetObjectsFromPath(path string) ([]*resource.Info, error)
 	GetObjectsFromStream(reader io.Reader) ([]*resource.Info, error)
@@ -40,7 +40,7 @@ type ClientMgr interface {
 }
 
 type clientMgr struct {
-	factory.Factory
+	factory factory.Factory
 }
 
 // NullSchema always validates bytes.
@@ -49,8 +49,12 @@ type NullSchema struct{}
 // ValidateBytes never fails for NullSchema.
 func (NullSchema) ValidateBytes(data []byte) error { return nil }
 
+func (cmgr clientMgr) Factory() factory.Factory {
+	return cmgr.factory
+}
+
 func (cmgr clientMgr) Namespace() (string, error) {
-	cfg, err := cmgr.GetOverrideFlags()
+	cfg, err := cmgr.factory.GetOverrideFlags()
 	if err != nil {
 		return "", err
 	}
@@ -62,7 +66,7 @@ func (cmgr clientMgr) Namespace() (string, error) {
 // GetObjectsFromPath Obtains objects from filepath or url
 func (cmgr clientMgr) GetObjectsFromPath(path string) ([]*resource.Info, error) {
 	usage := "contains the manifest to process"
-	cfg, err := cmgr.GetOverrideFlags()
+	cfg, err := cmgr.factory.GetOverrideFlags()
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +80,7 @@ func (cmgr clientMgr) GetObjectsFromPath(path string) ([]*resource.Info, error) 
 		Recursive: &recursive,
 	}
 	fileNameOpts := fileNameFlags.ToOptions()
-	builder := cmgr.Builder()
+	builder := cmgr.factory.Builder()
 	r := builder.
 		Unstructured().
 		Schema(NullSchema{}).
@@ -92,12 +96,12 @@ func (cmgr clientMgr) GetObjectsFromPath(path string) ([]*resource.Info, error) 
 
 // GetObjectsFromPath Obtains objects from a io.Reader stream
 func (cmgr clientMgr) GetObjectsFromStream(reader io.Reader) ([]*resource.Info, error) {
-	cfg, err := cmgr.GetOverrideFlags()
+	cfg, err := cmgr.factory.GetOverrideFlags()
 	if err != nil {
 		return nil, err
 	}
 
-	builder := cmgr.Builder()
+	builder := cmgr.factory.Builder()
 	r := builder.
 		Unstructured().
 		Schema(NullSchema{}).
@@ -123,7 +127,7 @@ func (cmgr clientMgr) GetObjectsFromServer(resourceType, name string) ([]*resour
 		selectAll = false
 		nameSelector = fields.OneTermEqualSelector("metadata.name", name).String()
 	}
-	builder := cmgr.Builder()
+	builder := cmgr.factory.Builder()
 	r := builder.
 		Unstructured().
 		ContinueOnError().

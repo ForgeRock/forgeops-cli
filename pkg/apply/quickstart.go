@@ -122,7 +122,7 @@ func printSecret(clientFactory factory.Factory, importantSecrets []qsSecret) err
 	if err != nil {
 		return err
 	}
-	sclient, err := k8sCntMgr.StaticClient()
+	sclient, err := k8sCntMgr.Factory().StaticClient()
 	if err != nil {
 		return err
 	}
