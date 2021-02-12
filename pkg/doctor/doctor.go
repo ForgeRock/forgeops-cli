@@ -72,7 +72,7 @@ spec:
       apiversion: v1alpha1
       group: secret-agent.secrets.forgerock.io
       checks:
-        - expression: status.totalManagedObjects == len(spec.secrets)
+        - expression: status.totalManagedSecrets == len(spec.secrets)
           timeout: 0s
         - expression: status.state == "Completed"
           timeout: 0s
