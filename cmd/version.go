@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/ForgeRock/forgeops-cli/api"
+	"github.com/ForgeRock/forgeops-cli/internal/printer"
 	"github.com/ForgeRock/forgeops-cli/pkg/version"
 	"github.com/spf13/cobra"
 )
@@ -14,12 +14,29 @@ var versionCmd = &cobra.Command{
 	Long: `
     Print the build information.
     Please provide the output of this command when reporting issues.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Build Date:", version.BuildDate)
-		fmt.Println("Git Commit:", version.GitCommit)
-		fmt.Println("Version:", version.Version)
-		fmt.Println("Go Version:", version.GoVersion)
-		fmt.Println("OS / Arch:", version.OsArch)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		log := printer.Logger()
+		log.Debug().Msgf("gathering version information without output of %s", printer.CommandOut)
+		switch printer.CommandOut {
+		case printer.OutJson:
+			results, _ := api.NewResultFromKeyPair(
+				"build_date:", version.BuildDate,
+				"git commit:", version.GitCommit,
+				"version:", version.Version,
+				"go_version:", version.GoVersion,
+				"os_arch:", version.OsArch,
+			)
+			printer.JsonResult("forgeops version", results)
+		case printer.OutText:
+			printer.Printf("Build Date: %s", version.BuildDate)
+			printer.Printf("Git Commit: %s", version.GitCommit)
+			printer.Printf("Version: %s", version.Version)
+			printer.Printf("Go Version: %s", version.GoVersion)
+			printer.Printf("OS / Arch: %s", version.OsArch)
+			return nil
+
+		}
+		return nil
 	},
 	SilenceUsage:      true,
 	DisableAutoGenTag: true,

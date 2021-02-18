@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra/doc"
 )
 
-var output string
+var docFormat string
 var outputDir string
 
 var docsCmd = &cobra.Command{
@@ -16,7 +16,7 @@ var docsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmdTree := cmd.Parent()
 		os.Mkdir(outputDir, 0755)
-		switch output {
+		switch docFormat {
 		case "man":
 			header := &doc.GenManHeader{
 				Title:   "FORGEOPS",
@@ -40,7 +40,7 @@ var docsCmd = &cobra.Command{
 }
 
 func init() {
-	docsCmd.Flags().StringVarP(&output, "output", "o", "md", "output can be md || man")
+	docsCmd.Flags().StringVarP(&docFormat, "doc-type", "t", "md", "output can be md || man")
 	docsCmd.Flags().StringVarP(&outputDir, "output-dir", "d", "./docs", "output path docs")
 	rootCmd.AddCommand(docsCmd)
 }

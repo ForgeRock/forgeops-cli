@@ -5,6 +5,7 @@ import (
 
 	"github.com/ForgeRock/forgeops-cli/internal/factory"
 	"github.com/ForgeRock/forgeops-cli/internal/printer"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"github.com/spf13/pflag"
@@ -16,6 +17,9 @@ var cfgFile string
 var clientFactory factory.Factory
 var tag string
 var skipUserConfirmation bool
+var output string
+var logLevel string
+var outType printer.OutType
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -25,6 +29,32 @@ var rootCmd = &cobra.Command{
     This tool helps deploy the ForgeRock platform, debug common issues, and validate environments.`,
 	DisableAutoGenTag: true,
 	SilenceErrors:     true, //We format and print errors ourselves during Execute().
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		switch output {
+		case "text":
+			outType = printer.OutText
+		case "json":
+			outType = printer.OutJson
+		default:
+			printer.Errorln("Couldn't determine output type")
+			os.Exit(1)
+		}
+		switch logLevel {
+		case "none":
+			printer.InitLogn(outType, zerolog.Disabled)
+		case "debug":
+			printer.InitLogn(outType, zerolog.DebugLevel)
+		case "info":
+			printer.InitLogn(outType, zerolog.InfoLevel)
+		case "warn":
+			printer.InitLogn(outType, zerolog.WarnLevel)
+		case "error":
+			printer.InitLogn(outType, zerolog.ErrorLevel)
+		default:
+			printer.Errorln("Couldn't determine loglevel")
+			os.Exit(1)
+		}
+	},
 }
 
 // Doc Generate Documents
@@ -42,7 +72,8 @@ func Execute() {
 }
 
 func init() {
-	// There's nothing here
+	rootCmd.PersistentFlags().StringVar(&logLevel, "log-level", "none", "(options: none|debug|info|warn|error) log statement level. When output=text and level is not 'none' the level is debug")
+	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", "text", "(options: text|json) command output type. Type json is intended for use in scripting, text is for interactive usage. Not all commands provide both types of output")
 }
 
 func initK8sFlags(flags *pflag.FlagSet) *genericclioptions.ConfigFlags {

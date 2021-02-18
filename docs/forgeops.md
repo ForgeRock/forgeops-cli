@@ -10,7 +10,9 @@ forgeops is a tool for managing ForgeRock Identity Platform deployments
 ### Options
 
 ```
-  -h, --help   help for forgeops
+  -h, --help               help for forgeops
+      --log-level string   (options: none|debug|info|warn|error) log statement level. When output=text and level is not 'none' the level is debug (default "none")
+  -o, --output string      (options: text|json) command output type. Type json is intended for use in scripting, text is for interactive usage. Not all commands provide both types of output (default "text")
 ```
 
 ### SEE ALSO

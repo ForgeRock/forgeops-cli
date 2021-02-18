@@ -41,7 +41,9 @@ forgeops status platform [flags]
       --context string                 The name of the kubeconfig context to use
       --insecure-skip-tls-verify       If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure
       --kubeconfig string              Path to the kubeconfig file to use for CLI requests.
+      --log-level string               (options: none|debug|info|warn|error) log statement level. When output=text and level is not 'none' the level is debug (default "none")
   -n, --namespace string               If present, the namespace scope for this CLI request
+  -o, --output string                  (options: text|json) command output type. Type json is intended for use in scripting, text is for interactive usage. Not all commands provide both types of output (default "text")
       --password string                Password for basic authentication to the API server
       --request-timeout string         The length of time to wait before giving up on a single server request. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means don't timeout requests. (default "0")
   -s, --server string                  The address and port of the Kubernetes API server
