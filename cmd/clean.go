@@ -18,6 +18,7 @@ var cleanCmd = &cobra.Command{
     Remove any remaining platform components from the given namespace`,
 	// Configure Client Mgr for all subcommands
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		cmd.Parent().PersistentPreRun(cmd.Parent(), args)
 		clientFactory = factory.NewFactory(cleanFlags)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {

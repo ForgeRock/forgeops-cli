@@ -169,6 +169,7 @@ var applyCmd = &cobra.Command{
     forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace --fqdn demo.customdomain.com`,
 	// Configure Client Mgr for all subcommands
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		cmd.Parent().PersistentPreRun(cmd.Parent(), args)
 		clientFactory = factory.NewFactory(applyFlags)
 	},
 	SilenceUsage:      true,

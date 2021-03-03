@@ -117,6 +117,7 @@ var (
 		`,
 		// Configure Client Mgr for all subcommands
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			cmd.Parent().PersistentPreRun(cmd.Parent(), args)
 			clientFactory = factory.NewFactory(doctorFlags)
 
 		},
