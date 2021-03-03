@@ -1,33 +1,40 @@
-## forgeops apply directory
+## forgeops install quickstart
 
-Apply the ForgeRock DS resources
+Install the ForgeRock Cloud Deployment Quickstart (CDQ)
 
 ### Synopsis
 
 
-    Apply the directory service resources of the ForgeRock cloud deployment:
-    * Apply the directory service resources of ForgeRock cloud deployment
-    * Use --tag to specify a different version to apply
+    Install the ForgeRock Cloud Deployment Quickstart (CDQ):
+    * Install the latest quickstart manifest
+    * Use --tag to specify a different CDQ version to install
 
 ```
-forgeops apply directory [flags]
+forgeops install quickstart [flags]
 ```
 
 ### Examples
 
 ```
 
-      # Apply the directory service resources listed in the "latest" release of the forgeops repository.
-      forgeops apply directory
-
-      # Apply the directory service resources listed in a specific release of the forgeops repository.
-      forgeops apply directory --tag 2020.10.28-AlSugoDiNoci
+      # Install the "latest" CDQ in the "default" namespace.
+      forgeops install quickstart
+    
+      # Install the CDQ in the "default" namespace.
+      forgeops install quickstart --tag 2020.10.28-AlSugoDiNoci
+      
+      # Install the CDQ in a given namespace.
+      forgeops install quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace
+      
+      # Install the CDQ with a custom FQDN.
+      forgeops install quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace --fqdn demo.customdomain.com
 ```
 
 ### Options
 
 ```
-  -h, --help   help for directory
+      --fqdn string   FQDN used in the deployment. (default "[NAMESPACE].iam.example.com")
+  -h, --help          help for quickstart
 ```
 
 ### Options inherited from parent commands
@@ -57,5 +64,5 @@ forgeops apply directory [flags]
 
 ### SEE ALSO
 
-* [forgeops apply](forgeops_apply.md)	 - Apply common platform components
+* [forgeops install](forgeops_install.md)	 - Install common platform components
 

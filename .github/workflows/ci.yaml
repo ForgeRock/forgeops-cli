@@ -23,7 +23,7 @@ jobs:
       run: go fmt ./...
 
     - name: Generate cobra docs
-      run: go run main.go docs
+      run: rm -rf docs/ && go run main.go docs
 
     - name: Check for uncommited files
       run: if [ -n "$(git status --untracked-files=no --porcelain)" ]; then echo "There are uncommitted changes"; exit 1; fi

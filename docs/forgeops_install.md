@@ -1,27 +1,27 @@
-## forgeops apply
+## forgeops install
 
-Apply common platform components
+Install common platform components
 
 ### Synopsis
 
 
-	Apply common platform components
+	Install common platform components
 
 ### Examples
 
 ```
 
-    # Apply the "latest" ds-operator.
-    forgeops apply ds-operator
+    # Install the "latest" ds-operator.
+    forgeops install ds-operator
 
-    # Apply the "latest" secret-agent.
-    forgeops apply sa
+    # Install the "latest" secret-agent.
+    forgeops install sa
 
-    # Apply the CDQ in a given namespace.
-    forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace
+    # Install the CDQ in a given namespace.
+    forgeops install quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace
     
-    # Apply the CDQ with a custom FQDN.
-    forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace --fqdn demo.customdomain.com
+    # Install the CDQ with a custom FQDN.
+    forgeops install quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace --fqdn demo.customdomain.com
 ```
 
 ### Options
@@ -34,7 +34,7 @@ Apply common platform components
       --client-key string              Path to a client key file for TLS
       --cluster string                 The name of the kubeconfig cluster to use
       --context string                 The name of the kubeconfig context to use
-  -h, --help                           help for apply
+  -h, --help                           help for install
       --insecure-skip-tls-verify       If true, the server's certificate will not be checked for validity. This will make your HTTPS connections insecure
       --kubeconfig string              Path to the kubeconfig file to use for CLI requests.
   -n, --namespace string               If present, the namespace scope for this CLI request
@@ -58,10 +58,10 @@ Apply common platform components
 ### SEE ALSO
 
 * [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock Identity Platform deployments
-* [forgeops apply apps](forgeops_apply_apps.md)	 - Apply the ForgeRock apps (AM, IDM, UI)
-* [forgeops apply base](forgeops_apply_base.md)	 - Apply the ForgeRock base resources
-* [forgeops apply directory](forgeops_apply_directory.md)	 - Apply the ForgeRock DS resources
-* [forgeops apply ds-operator](forgeops_apply_ds-operator.md)	 - Apply the ForgeRock DS operator
-* [forgeops apply quickstart](forgeops_apply_quickstart.md)	 - Apply the ForgeRock Cloud Deployment Quickstart (CDQ)
-* [forgeops apply secret-agent](forgeops_apply_secret-agent.md)	 - Apply the ForgeRock Secret Agent
+* [forgeops install apps](forgeops_install_apps.md)	 - Install the ForgeRock apps (AM, IDM, UI)
+* [forgeops install base](forgeops_install_base.md)	 - Install the ForgeRock base resources
+* [forgeops install directory](forgeops_install_directory.md)	 - Install the ForgeRock DS resources
+* [forgeops install ds-operator](forgeops_install_ds-operator.md)	 - Install the ForgeRock DS operator
+* [forgeops install quickstart](forgeops_install_quickstart.md)	 - Install the ForgeRock Cloud Deployment Quickstart (CDQ)
+* [forgeops install secret-agent](forgeops_install_secret-agent.md)	 - Install the ForgeRock Secret Agent
 

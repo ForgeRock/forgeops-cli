@@ -50,7 +50,7 @@ func Resources(clientFactory factory.Factory, infos []*resource.Info, skipUserQ 
 	if !accepted {
 		return errDidNotAccept
 	}
-	// Iterate through all objects, applying each one.
+	// Iterate through all objects, deleting each one.
 	for _, info := range infos {
 		if err := k8sCntMgr.DeleteObject(info); err != nil {
 			errs = append(errs, err)

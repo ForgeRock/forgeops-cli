@@ -58,4 +58,5 @@ build: fmt vet test clean
 
 # generates forgeops-cli docs
 docs doc: vet fmt
+	rm -rf docs/
 	go run main.go docs

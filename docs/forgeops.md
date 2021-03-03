@@ -17,12 +17,12 @@ forgeops is a tool for managing ForgeRock Identity Platform deployments
 
 ### SEE ALSO
 
-* [forgeops apply](forgeops_apply.md)	 - Apply common platform components
 * [forgeops clean](forgeops_clean.md)	 - Remove any remaining platform components from the given namespace
 * [forgeops delete](forgeops_delete.md)	 - Delete common platform components
 * [forgeops docs](forgeops_docs.md)	 - Generate docs
 * [forgeops doctor](forgeops_doctor.md)	 - Diagnose common cluster and platform deployments
 * [forgeops get](forgeops_get.md)	 - Get platform information
+* [forgeops install](forgeops_install.md)	 - Install common platform components
 * [forgeops status](forgeops_status.md)	 - Diagnose common cluster and platform deployments
 * [forgeops version](forgeops_version.md)	 - Print the build information
 

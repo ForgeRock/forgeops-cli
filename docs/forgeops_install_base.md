@@ -1,33 +1,34 @@
-## forgeops apply ds-operator
+## forgeops install base
 
-Apply the ForgeRock DS operator
+Install the ForgeRock base resources
 
 ### Synopsis
 
 
-    Apply the ForgeRock ds-operator:
-    * Apply the latest ds-operator manifest
-    * Use --tag to specify a different ds-operator version to apply
+    Install the base resources of the ForgeRock cloud deployment:
+    * Install the base resources of ForgeRock cloud deployment
+    * Use --tag to specify a different version to install
 
 ```
-forgeops apply ds-operator [flags]
+forgeops install base [flags]
 ```
 
 ### Examples
 
 ```
 
-      # Apply the "latest" ds-operator.
-      forgeops apply ds-operator
+      # Install the base resources listed in the "latest" release of the forgeops repository.
+      forgeops install base
 
-      # Apply a specific version of the ds-operator.
-      forgeops apply ds-operator --tag v0.0.4
+      # Install the base resources listed in a specific release of the forgeops repository.
+      forgeops install base --tag 2020.10.28-AlSugoDiNoci
 ```
 
 ### Options
 
 ```
-  -h, --help   help for ds-operator
+      --fqdn string   FQDN used in the deployment. (default "[NAMESPACE].iam.example.com")
+  -h, --help          help for base
 ```
 
 ### Options inherited from parent commands
@@ -57,5 +58,5 @@ forgeops apply ds-operator [flags]
 
 ### SEE ALSO
 
-* [forgeops apply](forgeops_apply.md)	 - Apply common platform components
+* [forgeops install](forgeops_install.md)	 - Install common platform components
 

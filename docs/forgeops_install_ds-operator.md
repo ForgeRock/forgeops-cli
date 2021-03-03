@@ -1,40 +1,33 @@
-## forgeops apply quickstart
+## forgeops install ds-operator
 
-Apply the ForgeRock Cloud Deployment Quickstart (CDQ)
+Install the ForgeRock DS operator
 
 ### Synopsis
 
 
-    Apply the ForgeRock Cloud Deployment Quickstart (CDQ):
-    * Apply the latest quickstart manifest
-    * Use --tag to specify a different CDQ version to apply
+    Install the ForgeRock ds-operator:
+    * Install the latest ds-operator manifest
+    * Use --tag to specify a different ds-operator version to install
 
 ```
-forgeops apply quickstart [flags]
+forgeops install ds-operator [flags]
 ```
 
 ### Examples
 
 ```
 
-      # Apply the "latest" CDQ in the "default" namespace.
-      forgeops apply quickstart
-    
-      # Apply the CDQ in the "default" namespace.
-      forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci
-      
-      # Apply the CDQ in a given namespace.
-      forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace
-      
-      # Apply the CDQ with a custom FQDN.
-      forgeops apply quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace --fqdn demo.customdomain.com
+      # Install the "latest" ds-operator.
+      forgeops install ds-operator
+
+      # Install a specific version of the ds-operator.
+      forgeops install ds-operator --tag v0.0.4
 ```
 
 ### Options
 
 ```
-      --fqdn string   FQDN used in the deployment. (default "[NAMESPACE].iam.example.com")
-  -h, --help          help for quickstart
+  -h, --help   help for ds-operator
 ```
 
 ### Options inherited from parent commands
@@ -64,5 +57,5 @@ forgeops apply quickstart [flags]
 
 ### SEE ALSO
 
-* [forgeops apply](forgeops_apply.md)	 - Apply common platform components
+* [forgeops install](forgeops_install.md)	 - Install common platform components
 

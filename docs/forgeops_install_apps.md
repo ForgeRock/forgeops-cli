@@ -1,34 +1,33 @@
-## forgeops apply base
+## forgeops install apps
 
-Apply the ForgeRock base resources
+Install the ForgeRock apps (AM, IDM, UI)
 
 ### Synopsis
 
 
-    Apply the base resources of the ForgeRock cloud deployment:
-    * Apply the base resources of ForgeRock cloud deployment
-    * Use --tag to specify a different version to apply
+    Install the ForgeRock apps (AM, IDM, UI):
+    * Install the ForgeRock apps
+    * Use --tag to specify a different version to install
 
 ```
-forgeops apply base [flags]
+forgeops install apps [flags]
 ```
 
 ### Examples
 
 ```
 
-      # Apply the base resources listed in the "latest" release of the forgeops repository.
-      forgeops apply base
+      # Install the ForgeRock apps listed in the "latest" release of the forgeops repository.
+      forgeops install apps
 
-      # Apply the base resources listed in a specific release of the forgeops repository.
-      forgeops apply base --tag 2020.10.28-AlSugoDiNoci
+      # Install the ForgeRock apps listed in a specific release of the forgeops repository.
+      forgeops install apps --tag 2020.10.28-AlSugoDiNoci
 ```
 
 ### Options
 
 ```
-      --fqdn string   FQDN used in the deployment. (default "[NAMESPACE].iam.example.com")
-  -h, --help          help for base
+  -h, --help   help for apps
 ```
 
 ### Options inherited from parent commands
@@ -58,5 +57,5 @@ forgeops apply base [flags]
 
 ### SEE ALSO
 
-* [forgeops apply](forgeops_apply.md)	 - Apply common platform components
+* [forgeops install](forgeops_install.md)	 - Install common platform components
 

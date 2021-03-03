@@ -1,33 +1,33 @@
-## forgeops apply secret-agent
+## forgeops install directory
 
-Apply the ForgeRock Secret Agent
+Install the ForgeRock DS resources
 
 ### Synopsis
 
 
-    Apply the ForgeRock secret-agent:
-    * Apply the latest secret-agent manifest
-    * Use --tag to specify a different secret-agent version to apply
+    Install the directory service resources of the ForgeRock cloud deployment:
+    * Install the directory service resources of ForgeRock cloud deployment
+    * Use --tag to specify a different version to install
 
 ```
-forgeops apply secret-agent [flags]
+forgeops install directory [flags]
 ```
 
 ### Examples
 
 ```
 
-      # Apply the "latest" secret-agent.
-      forgeops apply sa
+      # Install the directory service resources listed in the "latest" release of the forgeops repository.
+      forgeops install directory
 
-      # Apply a specific version of the secret-agent.
-      forgeops apply sa --tag v0.2.1
+      # Install the directory service resources listed in a specific release of the forgeops repository.
+      forgeops install directory --tag 2020.10.28-AlSugoDiNoci
 ```
 
 ### Options
 
 ```
-  -h, --help   help for secret-agent
+  -h, --help   help for directory
 ```
 
 ### Options inherited from parent commands
@@ -57,5 +57,5 @@ forgeops apply secret-agent [flags]
 
 ### SEE ALSO
 
-* [forgeops apply](forgeops_apply.md)	 - Apply common platform components
+* [forgeops install](forgeops_install.md)	 - Install common platform components
 
