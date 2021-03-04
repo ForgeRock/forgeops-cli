@@ -1,18 +1,11 @@
 package health
 
 import (
-	"github.com/antonmedv/expr"
+	"github.com/ForgeRock/forgeops-cli/internal/k8s"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/apimachinery/pkg/watch"
-
-	"github.com/ForgeRock/forgeops-cli/internal/k8s"
 )
-
-// ErrExpressionResult only boolean expressions are permitted
-var ErrExpressionResult error = errors.New("only boolean expressions are permitted")
 
 // Check expression to be evaluated against a resource
 type Check struct {
@@ -33,23 +26,6 @@ type Resource struct {
 	Checks     []*Check `json:"checks"`
 }
 
-// conditionExpression wrap condition function using a closure allowing the event call back to have an expression
-func conditionExpression(expression string) k8s.ConditionFunction {
-	return func(event watch.Event, obj *unstructured.Unstructured) (bool, error) {
-		// compile expression with object, Env help with typing during evaluation
-		pgrm, err := expr.Compile(expression, expr.Env(obj.Object), expr.AsBool())
-		if err != nil {
-			return false, errors.WithMessage(ErrExpressionResult, err.Error())
-		}
-		// check against the object
-		output, err := expr.Run(pgrm, obj.Object)
-		if err != nil {
-			return false, err
-		}
-		return output.(bool), nil
-	}
-}
-
 // Check run wait on resource until expression passes
 // note at the moment it doesn't track any success/fails
 // a resource is checked in a namespace with the following priority
@@ -68,7 +44,7 @@ func (r *Resource) Check(clientMgr k8s.ClientMgr, fallBackNamespace string) (boo
 	passed := true
 	for _, check := range r.Checks {
 		// TODO WatchEventsForCondition should use a context
-		met, err := clientMgr.WatchEventsForCondition(int(check.Timeout.Seconds()), namespace, r.Name, gvr, conditionExpression(check.Expression))
+		met, err := clientMgr.WatchEventsForCondition(int(check.Timeout.Seconds()), namespace, r.Name, gvr, k8s.ConditionExpression(check.Expression))
 		// A watch or condition not being met is failed, but not an _error_
 		if errors.Is(err, k8s.ErrWatchTimeout) {
 			passed = false

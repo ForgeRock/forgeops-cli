@@ -58,10 +58,11 @@ Install common platform components
 ### SEE ALSO
 
 * [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock Identity Platform deployments
-* [forgeops install apps](forgeops_install_apps.md)	 - Install the ForgeRock apps (AM, IDM, UI)
-* [forgeops install base](forgeops_install_base.md)	 - Install the ForgeRock base resources
-* [forgeops install directory](forgeops_install_directory.md)	 - Install the ForgeRock DS resources
+* [forgeops install apps](forgeops_install_apps.md)	 - Install the ForgeRock apps
+* [forgeops install base](forgeops_install_base.md)	 - Install the ForgeRock base
+* [forgeops install directory](forgeops_install_directory.md)	 - Install the ForgeRock directory
 * [forgeops install ds-operator](forgeops_install_ds-operator.md)	 - Install the ForgeRock DS operator
 * [forgeops install quickstart](forgeops_install_quickstart.md)	 - Install the ForgeRock Cloud Deployment Quickstart (CDQ)
 * [forgeops install secret-agent](forgeops_install_secret-agent.md)	 - Install the ForgeRock Secret Agent
+* [forgeops install ui](forgeops_install_ui.md)	 - Install the ForgeRock ui
 

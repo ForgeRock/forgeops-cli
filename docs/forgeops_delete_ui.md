@@ -1,33 +1,32 @@
-## forgeops delete base
+## forgeops delete ui
 
-Delete the ForgeRock base
+Delete the ForgeRock ui
 
 ### Synopsis
 
 
-            Delete the ForgeRock Identity Platform base:
-            * Delete the ForgeRock Identity Platform "base"
+            Delete the ForgeRock Identity Platform ui:
+            * Delete the ForgeRock Identity Platform "ui"
             * Use --tag to specify a different version to delete
 
 ```
-forgeops delete base [flags]
+forgeops delete ui [flags]
 ```
 
 ### Examples
 
 ```
 
-            # Delete the ForgeRock "base" in the default namespace.
-            forgeops delete base
-            # Delete the ForgeRock "base" in a given namespace.
-            forgeops delete base --namespace mynamespace
+            # Delete the ForgeRock "ui" in the default namespace.
+            forgeops delete ui
+            # Delete the ForgeRock "ui" in a given namespace.
+            forgeops delete ui --namespace mynamespace
 ```
 
 ### Options
 
 ```
-      --fqdn string   FQDN used in the deployment. (default "[NAMESPACE].iam.example.com")
-  -h, --help          help for base
+  -h, --help   help for ui
 ```
 
 ### Options inherited from parent commands

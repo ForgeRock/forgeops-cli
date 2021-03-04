@@ -1,8 +1,9 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/ForgeRock/forgeops-cli/internal/factory"
-	"github.com/ForgeRock/forgeops-cli/internal/printer"
 	"github.com/ForgeRock/forgeops-cli/pkg/install"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -33,7 +34,7 @@ var quickstart = &cobra.Command{
       # Install the CDQ with a custom FQDN.
       forgeops install quickstart --tag 2020.10.28-AlSugoDiNoci --namespace mynamespace --fqdn demo.customdomain.com`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := install.Quickstart(clientFactory, tag, fqdn)
+		err := install.Quickstart(clientFactory, "ForgeRock/forgeops", tag, fqdn)
 		return err
 	},
 	SilenceUsage:      true,
@@ -84,72 +85,6 @@ var dsOperator = &cobra.Command{
 	DisableAutoGenTag: true,
 }
 
-var forgeopsBase = &cobra.Command{
-	Use:     "base",
-	Aliases: []string{"fb"},
-	Short:   "Install the ForgeRock base resources",
-	Long: `
-    Install the base resources of the ForgeRock cloud deployment:
-    * Install the base resources of ForgeRock cloud deployment
-    * Use --tag to specify a different version to install`,
-	Example: `
-      # Install the base resources listed in the "latest" release of the forgeops repository.
-      forgeops install base
-
-      # Install the base resources listed in a specific release of the forgeops repository.
-      forgeops install base --tag 2020.10.28-AlSugoDiNoci`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		printer.Noticeln("This command is not implemented yet")
-		return nil
-	},
-	SilenceUsage:      true,
-	DisableAutoGenTag: true,
-}
-
-var forgeopsDirectory = &cobra.Command{
-	Use:     "directory",
-	Aliases: []string{"fd"},
-	Short:   "Install the ForgeRock DS resources",
-	Long: `
-    Install the directory service resources of the ForgeRock cloud deployment:
-    * Install the directory service resources of ForgeRock cloud deployment
-    * Use --tag to specify a different version to install`,
-	Example: `
-      # Install the directory service resources listed in the "latest" release of the forgeops repository.
-      forgeops install directory
-
-      # Install the directory service resources listed in a specific release of the forgeops repository.
-      forgeops install directory --tag 2020.10.28-AlSugoDiNoci`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		printer.Noticeln("This command is not implemented yet")
-		return nil
-	},
-	SilenceUsage:      true,
-	DisableAutoGenTag: true,
-}
-
-var forgeopsApps = &cobra.Command{
-	Use:     "apps",
-	Aliases: []string{"fa"},
-	Short:   "Install the ForgeRock apps (AM, IDM, UI)",
-	Long: `
-    Install the ForgeRock apps (AM, IDM, UI):
-    * Install the ForgeRock apps
-    * Use --tag to specify a different version to install`,
-	Example: `
-      # Install the ForgeRock apps listed in the "latest" release of the forgeops repository.
-      forgeops install apps
-
-      # Install the ForgeRock apps listed in a specific release of the forgeops repository.
-      forgeops install apps --tag 2020.10.28-AlSugoDiNoci`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		printer.Noticeln("This command is not implemented yet")
-		return nil
-	},
-	SilenceUsage:      true,
-	DisableAutoGenTag: true,
-}
-
 var installCmd = &cobra.Command{
 	Use:   "install",
 	Short: "Install common platform components",
@@ -176,6 +111,59 @@ var installCmd = &cobra.Command{
 	DisableAutoGenTag: true,
 }
 
+func generateFRComponentInstallCommands() {
+	type componentProperties struct {
+		artifactName string
+		hidden       bool
+		aliases      []string
+	}
+	var componentList = map[string]componentProperties{
+		"base":        {"base.yaml", false, []string{}},
+		"directory":   {"ds.yaml", false, []string{"ds"}},
+		"apps":        {"apps.yaml", false, []string{}},
+		"ui":          {"ui.yaml", false, []string{}},
+		"ds-cts":      {"ds-cts.yaml", true, []string{}},
+		"ds-idrepo":   {"ds-idrepo.yaml", true, []string{}},
+		"am":          {"am.yaml", true, []string{}},
+		"amster":      {"amster.yaml", true, []string{}},
+		"idm":         {"idm.yaml", true, []string{}},
+		"admin-ui":    {"admin-ui.yaml", true, []string{}},
+		"end-user-ui": {"end-user-ui.yaml", true, []string{"enduser-ui"}},
+		"login-ui":    {"login-ui.yaml", true, []string{}},
+		"rcs-agent":   {"rcs-agent.yaml", true, []string{}},
+	}
+	newCmd := func(componentName string, componentProperty componentProperties) *cobra.Command {
+		return &cobra.Command{
+			Use:     componentName,
+			Aliases: componentProperty.aliases,
+			Short:   fmt.Sprintf("Install the ForgeRock %[1]s", componentName),
+			Long: fmt.Sprintf(`
+            Install the ForgeRock Identity Platform %[1]s:
+            * Install the ForgeRock Identity Platform %[1]q
+            * Use --tag to specify a different version to install`, componentName),
+			Example: fmt.Sprintf(`
+            # Install the ForgeRock %[1]q in the default namespace.
+            forgeops install %[1]s
+            # Install the ForgeRock %[1]q in a given namespace.
+            forgeops install %[1]s --namespace mynamespace`, componentName),
+			RunE: func(cmd *cobra.Command, args []string) error {
+				err := install.ForgeRockComponent(clientFactory, "ForgeRock/forgeops", componentProperty.artifactName, tag, fqdn)
+				return err
+			},
+			Hidden:            componentProperty.hidden,
+			SilenceUsage:      true,
+			DisableAutoGenTag: true,
+		}
+	}
+	for componentName, componentProperty := range componentList {
+		cmd := newCmd(componentName, componentProperty)
+		installCmd.AddCommand(cmd)
+		if componentName == "base" {
+			cmd.PersistentFlags().StringVar(&fqdn, "fqdn", "", "FQDN used in the deployment. (default \"[NAMESPACE].iam.example.com\")")
+		}
+	}
+}
+
 func init() {
 	// Install k8s flags
 	installFlags = initK8sFlags(installCmd.PersistentFlags())
@@ -183,14 +171,9 @@ func init() {
 	// Install command-specific flags
 	installCmd.PersistentFlags().StringVarP(&tag, "tag", "t", "latest", "Release tag  of the component to be deployed")
 	quickstart.PersistentFlags().StringVar(&fqdn, "fqdn", "", "FQDN used in the deployment. (default \"[NAMESPACE].iam.example.com\")")
-	forgeopsBase.PersistentFlags().StringVar(&fqdn, "fqdn", "", "FQDN used in the deployment. (default \"[NAMESPACE].iam.example.com\")")
-
 	installCmd.AddCommand(quickstart)
 	installCmd.AddCommand(secretAgent)
 	installCmd.AddCommand(dsOperator)
-	installCmd.AddCommand(forgeopsBase)
-	installCmd.AddCommand(forgeopsDirectory)
-	installCmd.AddCommand(forgeopsApps)
-
+	generateFRComponentInstallCommands()
 	rootCmd.AddCommand(installCmd)
 }

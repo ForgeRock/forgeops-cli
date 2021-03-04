@@ -1,33 +1,32 @@
-## forgeops delete base
+## forgeops install ui
 
-Delete the ForgeRock base
+Install the ForgeRock ui
 
 ### Synopsis
 
 
-            Delete the ForgeRock Identity Platform base:
-            * Delete the ForgeRock Identity Platform "base"
-            * Use --tag to specify a different version to delete
+            Install the ForgeRock Identity Platform ui:
+            * Install the ForgeRock Identity Platform "ui"
+            * Use --tag to specify a different version to install
 
 ```
-forgeops delete base [flags]
+forgeops install ui [flags]
 ```
 
 ### Examples
 
 ```
 
-            # Delete the ForgeRock "base" in the default namespace.
-            forgeops delete base
-            # Delete the ForgeRock "base" in a given namespace.
-            forgeops delete base --namespace mynamespace
+            # Install the ForgeRock "ui" in the default namespace.
+            forgeops install ui
+            # Install the ForgeRock "ui" in a given namespace.
+            forgeops install ui --namespace mynamespace
 ```
 
 ### Options
 
 ```
-      --fqdn string   FQDN used in the deployment. (default "[NAMESPACE].iam.example.com")
-  -h, --help          help for base
+  -h, --help   help for ui
 ```
 
 ### Options inherited from parent commands
@@ -48,15 +47,14 @@ forgeops delete base [flags]
       --password string                Password for basic authentication to the API server
       --request-timeout string         The length of time to wait before giving up on a single server request. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means don't timeout requests. (default "0")
   -s, --server string                  The address and port of the Kubernetes API server
-  -t, --tag string                     Release tag of the component to be deleted (default "latest")
+  -t, --tag string                     Release tag  of the component to be deployed (default "latest")
       --tls-server-name string         Server name to use for server certificate validation. If it is not provided, the hostname used to contact the server is used
       --token string                   Bearer token for authentication to the API server
       --user string                    The name of the kubeconfig user to use
       --username string                Username for basic authentication to the API server
-  -y, --yes                            Do not prompt for confirmation
 ```
 
 ### SEE ALSO
 
-* [forgeops delete](forgeops_delete.md)	 - Delete common platform components
+* [forgeops install](forgeops_install.md)	 - Install common platform components
 

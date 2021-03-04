@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/antonmedv/expr"
 	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -18,8 +19,28 @@ import (
 // ErrWatchTimeout wait timeout
 var ErrWatchTimeout error = errors.New("wait timeout")
 
+// ErrExpressionResult only boolean expressions are permitted
+var ErrExpressionResult error = errors.New("only boolean expressions are permitted")
+
 // ConditionFunction defines the conditions used to evaluate watch events
 type ConditionFunction func(event watch.Event, obj *unstructured.Unstructured) (bool, error)
+
+// ConditionExpression wrap condition function using a closure allowing the event call back to have an expression
+func ConditionExpression(expression string) ConditionFunction {
+	return func(event watch.Event, obj *unstructured.Unstructured) (bool, error) {
+		// compile expression with object, Env help with typing during evaluation
+		pgrm, err := expr.Compile(expression, expr.Env(obj.Object), expr.AsBool())
+		if err != nil {
+			return false, errors.WithMessage(ErrExpressionResult, err.Error())
+		}
+		// check against the object
+		output, err := expr.Run(pgrm, obj.Object)
+		if err != nil {
+			return false, err
+		}
+		return output.(bool), nil
+	}
+}
 
 // WatchEventsForCondition sets a watch for events and evaluatest the provided ConditionFunction
 func (cmgr clientMgr) WatchEventsForCondition(timeoutSecs int, ns, name string, gvr schema.GroupVersionResource, condition ConditionFunction) (bool, error) {

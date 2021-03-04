@@ -1,13 +1,13 @@
 ## forgeops install base
 
-Install the ForgeRock base resources
+Install the ForgeRock base
 
 ### Synopsis
 
 
-    Install the base resources of the ForgeRock cloud deployment:
-    * Install the base resources of ForgeRock cloud deployment
-    * Use --tag to specify a different version to install
+            Install the ForgeRock Identity Platform base:
+            * Install the ForgeRock Identity Platform "base"
+            * Use --tag to specify a different version to install
 
 ```
 forgeops install base [flags]
@@ -17,11 +17,10 @@ forgeops install base [flags]
 
 ```
 
-      # Install the base resources listed in the "latest" release of the forgeops repository.
-      forgeops install base
-
-      # Install the base resources listed in a specific release of the forgeops repository.
-      forgeops install base --tag 2020.10.28-AlSugoDiNoci
+            # Install the ForgeRock "base" in the default namespace.
+            forgeops install base
+            # Install the ForgeRock "base" in a given namespace.
+            forgeops install base --namespace mynamespace
 ```
 
 ### Options

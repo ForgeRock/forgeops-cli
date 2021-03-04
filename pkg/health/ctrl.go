@@ -42,9 +42,9 @@ func Run(clientFactory factory.Factory, hlth *Health, allNamespaces bool) (bool,
 		}
 		return allHealthy, nil
 	}
-	printer.Noticef("Health check %s has passed", hlth.Metadata.Name)
 	for _, resourceName := range hlth.healthy {
 		printer.Noticef("Resource %s is healthy", resourceName)
 	}
+	printer.Noticef("Health check %s has passed", hlth.Metadata.Name)
 	return allHealthy, nil
 }

@@ -1,13 +1,13 @@
 ## forgeops install directory
 
-Install the ForgeRock DS resources
+Install the ForgeRock directory
 
 ### Synopsis
 
 
-    Install the directory service resources of the ForgeRock cloud deployment:
-    * Install the directory service resources of ForgeRock cloud deployment
-    * Use --tag to specify a different version to install
+            Install the ForgeRock Identity Platform directory:
+            * Install the ForgeRock Identity Platform "directory"
+            * Use --tag to specify a different version to install
 
 ```
 forgeops install directory [flags]
@@ -17,11 +17,10 @@ forgeops install directory [flags]
 
 ```
 
-      # Install the directory service resources listed in the "latest" release of the forgeops repository.
-      forgeops install directory
-
-      # Install the directory service resources listed in a specific release of the forgeops repository.
-      forgeops install directory --tag 2020.10.28-AlSugoDiNoci
+            # Install the ForgeRock "directory" in the default namespace.
+            forgeops install directory
+            # Install the ForgeRock "directory" in a given namespace.
+            forgeops install directory --namespace mynamespace
 ```
 
 ### Options

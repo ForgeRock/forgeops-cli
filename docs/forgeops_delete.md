@@ -56,10 +56,11 @@ Delete common platform components
 ### SEE ALSO
 
 * [forgeops](forgeops.md)	 - forgeops is a tool for managing ForgeRock Identity Platform deployments
-* [forgeops delete apps](forgeops_delete_apps.md)	 - Delete the ForgeRock apps (AM, IDM, UI)
-* [forgeops delete base](forgeops_delete_base.md)	 - Delete the ForgeRock base resources
-* [forgeops delete directory](forgeops_delete_directory.md)	 - Delete the ForgeRock DS resources
+* [forgeops delete apps](forgeops_delete_apps.md)	 - Delete the ForgeRock apps
+* [forgeops delete base](forgeops_delete_base.md)	 - Delete the ForgeRock base
+* [forgeops delete directory](forgeops_delete_directory.md)	 - Delete the ForgeRock directory
 * [forgeops delete ds-operator](forgeops_delete_ds-operator.md)	 - Delete the ForgeRock DS operator
 * [forgeops delete quickstart](forgeops_delete_quickstart.md)	 - Delete the ForgeRock Cloud Deployment Quickstart (CDQ)
 * [forgeops delete secret-agent](forgeops_delete_secret-agent.md)	 - Delete the ForgeRock Secret Agent
+* [forgeops delete ui](forgeops_delete_ui.md)	 - Delete the ForgeRock ui
 

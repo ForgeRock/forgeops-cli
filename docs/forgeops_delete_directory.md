@@ -1,12 +1,13 @@
 ## forgeops delete directory
 
-Delete the ForgeRock DS resources
+Delete the ForgeRock directory
 
 ### Synopsis
 
 
-    Delete the directory service resources of the ForgeRock cloud deployment:
-    * Delete the directory service resources of ForgeRock cloud deployment
+            Delete the ForgeRock Identity Platform directory:
+            * Delete the ForgeRock Identity Platform "directory"
+            * Use --tag to specify a different version to delete
 
 ```
 forgeops delete directory [flags]
@@ -16,11 +17,10 @@ forgeops delete directory [flags]
 
 ```
 
-      # Delete the directory service resources from the "default" namespace.
-      forgeops delete directory
-
-      # Delete the directory service resources from a given namespace.
-      forgeops delete directory --namespace mynamespace
+            # Delete the ForgeRock "directory" in the default namespace.
+            forgeops delete directory
+            # Delete the ForgeRock "directory" in a given namespace.
+            forgeops delete directory --namespace mynamespace
 ```
 
 ### Options

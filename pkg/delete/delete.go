@@ -3,7 +3,6 @@ package delete
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"os"
 	"strings"
 
@@ -41,7 +40,8 @@ func Resources(clientFactory factory.Factory, infos []*resource.Info, skipUserQ 
 	errs := []error{}
 	k8sCntMgr := k8s.NewK8sClientMgr(clientFactory)
 	if len(infos) == 0 {
-		return fmt.Errorf("no objects found")
+		// Ignore "notFound" errors when deleting
+		return nil
 	}
 	accepted, err := askForConfirmation(skipUserQ, infos)
 	if err != nil {

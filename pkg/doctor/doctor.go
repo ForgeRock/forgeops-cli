@@ -1,7 +1,38 @@
 package doctor
 
 var (
-
+	// SecretAgentOperatorHealth health definition for secret-agent
+	SecretAgentOperatorHealth = []byte(`
+---
+kind: health
+version: v1alpha
+metadata:
+  name: forgerock/secret-agent
+spec:
+  resources:
+    - resource: deployments
+      name: secret-agent-controller-manager
+      apiversion: v1
+      group: apps
+      checks:
+`)
+	// DSOperatorHealth default health definition for ds-operator
+	DSOperatorHealth = []byte(`
+---
+kind: health
+version: v1alpha
+metadata:
+  name: forgerock/ds-operator
+spec:
+  resources:
+    - resource: deployments
+      name: ds-operator-ds-operator
+      apiversion: v1
+      group: apps
+      checks:
+        - expression: status.availableReplicas >= 1
+          timeout: 0s
+`)
 	// DefaultOperatorHealth default health definition for operators
 	DefaultOperatorHealth = []byte(`
 ---
@@ -16,21 +47,28 @@ spec:
       apiversion: v1
       group: apps
       checks:
-        - expression: status.availableReplicas == 1
+        - expression: status.availableReplicas >= 1
+          timeout: 0s
+    - resource: deployments
+      name: ds-operator-ds-operator
+      apiversion: v1
+      group: apps
+      checks:
+        - expression: status.availableReplicas >= 1
           timeout: 0s
     - resource: deployments
       name: ingress-nginx-controller
       apiversion: v1
       group: apps
       checks:
-        - expression: status.availableReplicas == 1
+        - expression: status.availableReplicas >= 1
           timeout: 0s
     - resource: deployments
       name: cert-manager
       apiversion: v1
       group: apps
       checks:
-        - expression: status.availableReplicas == 1
+        - expression: status.availableReplicas >= 1
           timeout: 0s
 `)
 	// DefaultConfigCheck default configuration check

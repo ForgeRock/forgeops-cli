@@ -1,13 +1,13 @@
 ## forgeops install apps
 
-Install the ForgeRock apps (AM, IDM, UI)
+Install the ForgeRock apps
 
 ### Synopsis
 
 
-    Install the ForgeRock apps (AM, IDM, UI):
-    * Install the ForgeRock apps
-    * Use --tag to specify a different version to install
+            Install the ForgeRock Identity Platform apps:
+            * Install the ForgeRock Identity Platform "apps"
+            * Use --tag to specify a different version to install
 
 ```
 forgeops install apps [flags]
@@ -17,11 +17,10 @@ forgeops install apps [flags]
 
 ```
 
-      # Install the ForgeRock apps listed in the "latest" release of the forgeops repository.
-      forgeops install apps
-
-      # Install the ForgeRock apps listed in a specific release of the forgeops repository.
-      forgeops install apps --tag 2020.10.28-AlSugoDiNoci
+            # Install the ForgeRock "apps" in the default namespace.
+            forgeops install apps
+            # Install the ForgeRock "apps" in a given namespace.
+            forgeops install apps --namespace mynamespace
 ```
 
 ### Options

@@ -1,12 +1,13 @@
 ## forgeops delete apps
 
-Delete the ForgeRock apps (AM, IDM, UI)
+Delete the ForgeRock apps
 
 ### Synopsis
 
 
-    Delete the ForgeRock apps (AM, IDM, UI):
-    * Delete the ForgeRock apps
+            Delete the ForgeRock Identity Platform apps:
+            * Delete the ForgeRock Identity Platform "apps"
+            * Use --tag to specify a different version to delete
 
 ```
 forgeops delete apps [flags]
@@ -16,11 +17,10 @@ forgeops delete apps [flags]
 
 ```
 
-      # Delete the ForgeRock apps from the "default" namespace.
-      forgeops delete apps
-
-      # Delete the ForgeRock apps from a given namespace.
-      forgeops delete apps --namespace mynamespace
+            # Delete the ForgeRock "apps" in the default namespace.
+            forgeops delete apps
+            # Delete the ForgeRock "apps" in a given namespace.
+            forgeops delete apps --namespace mynamespace
 ```
 
 ### Options

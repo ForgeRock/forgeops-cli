@@ -1,8 +1,9 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/ForgeRock/forgeops-cli/internal/factory"
-	"github.com/ForgeRock/forgeops-cli/internal/printer"
 	"github.com/ForgeRock/forgeops-cli/pkg/delete"
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -26,7 +27,7 @@ var deleteQuickstart = &cobra.Command{
     # Delete the CDQ from a given namespace.
     forgeops delete quickstart --namespace mynamespace`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := delete.Quickstart(clientFactory, tag, skipUserConfirmation)
+		err := delete.Quickstart(clientFactory, "ForgeRock/forgeops", tag, skipUserConfirmation)
 		return err
 	},
 	SilenceUsage:      true,
@@ -69,68 +70,6 @@ var deleteDsOperator = &cobra.Command{
 	DisableAutoGenTag: true,
 }
 
-var deleteForgeopsBase = &cobra.Command{
-	Use:     "base",
-	Aliases: []string{"fb"},
-	Short:   "Delete the ForgeRock base resources",
-	Long: `
-    Delete the base resources of the ForgeRock cloud deployment:
-    * Delete the base resources of ForgeRock cloud deployment`,
-	Example: `
-      # Delete the base resources from the "default" namespace.
-      forgeops delete base
-
-      # Delete the base resources from a given namespace.
-      forgeops delete base --namespace mynamespace`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		printer.Noticeln("This command is not implemented yet")
-		return nil
-	},
-	SilenceUsage:      true,
-	DisableAutoGenTag: true,
-}
-
-var deleteForgeopsDirectory = &cobra.Command{
-	Use:     "directory",
-	Aliases: []string{"fd"},
-	Short:   "Delete the ForgeRock DS resources",
-	Long: `
-    Delete the directory service resources of the ForgeRock cloud deployment:
-    * Delete the directory service resources of ForgeRock cloud deployment`,
-	Example: `
-      # Delete the directory service resources from the "default" namespace.
-      forgeops delete directory
-
-      # Delete the directory service resources from a given namespace.
-      forgeops delete directory --namespace mynamespace`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		printer.Noticeln("This command is not implemented yet")
-		return nil
-	},
-	SilenceUsage:      true,
-	DisableAutoGenTag: true,
-}
-
-var deleteForgeopsApps = &cobra.Command{
-	Use:     "apps",
-	Aliases: []string{"fa"},
-	Short:   "Delete the ForgeRock apps (AM, IDM, UI)",
-	Long: `
-    Delete the ForgeRock apps (AM, IDM, UI):
-    * Delete the ForgeRock apps`,
-	Example: `
-      # Delete the ForgeRock apps from the "default" namespace.
-      forgeops delete apps
-
-      # Delete the ForgeRock apps from a given namespace.
-      forgeops delete apps --namespace mynamespace`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		printer.Noticeln("This command is not implemented yet")
-		return nil
-	},
-	SilenceUsage:      true,
-	DisableAutoGenTag: true,
-}
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete common platform components",
@@ -154,6 +93,59 @@ var deleteCmd = &cobra.Command{
 	DisableAutoGenTag: true,
 }
 
+func generateFRComponentDeleteCommands() {
+	type componentProperties struct {
+		artifactName string
+		hidden       bool
+		aliases      []string
+	}
+	var componentList = map[string]componentProperties{
+		"base":        {"base.yaml", false, []string{}},
+		"directory":   {"ds.yaml", false, []string{"ds"}},
+		"apps":        {"apps.yaml", false, []string{}},
+		"ui":          {"ui.yaml", false, []string{}},
+		"ds-cts":      {"ds-cts.yaml", true, []string{}},
+		"ds-idrepo":   {"ds-idrepo.yaml", true, []string{}},
+		"am":          {"am.yaml", true, []string{}},
+		"amster":      {"amster.yaml", true, []string{}},
+		"idm":         {"idm.yaml", true, []string{}},
+		"admin-ui":    {"admin-ui.yaml", true, []string{}},
+		"end-user-ui": {"end-user-ui.yaml", true, []string{"enduser-ui"}},
+		"login-ui":    {"login-ui.yaml", true, []string{}},
+		"rcs-agent":   {"rcs-agent.yaml", true, []string{}},
+	}
+	newCmd := func(componentName string, componentProperty componentProperties) *cobra.Command {
+		return &cobra.Command{
+			Use:     componentName,
+			Aliases: componentProperty.aliases,
+			Short:   fmt.Sprintf("Delete the ForgeRock %[1]s", componentName),
+			Long: fmt.Sprintf(`
+            Delete the ForgeRock Identity Platform %[1]s:
+            * Delete the ForgeRock Identity Platform %[1]q
+            * Use --tag to specify a different version to delete`, componentName),
+			Example: fmt.Sprintf(`
+            # Delete the ForgeRock %[1]q in the default namespace.
+            forgeops delete %[1]s
+            # Delete the ForgeRock %[1]q in a given namespace.
+            forgeops delete %[1]s --namespace mynamespace`, componentName),
+			RunE: func(cmd *cobra.Command, args []string) error {
+				err := delete.ForgeRockComponent(clientFactory, "ForgeRock/forgeops", componentProperty.artifactName, tag, skipUserConfirmation)
+				return err
+			},
+			Hidden:            componentProperty.hidden,
+			SilenceUsage:      true,
+			DisableAutoGenTag: true,
+		}
+	}
+	for componentName, componentProperty := range componentList {
+		cmd := newCmd(componentName, componentProperty)
+		deleteCmd.AddCommand(cmd)
+		if componentName == "base" {
+			cmd.PersistentFlags().StringVar(&fqdn, "fqdn", "", "FQDN used in the deployment. (default \"[NAMESPACE].iam.example.com\")")
+		}
+	}
+}
+
 func init() {
 	// Install k8s flags
 	deleteFlags = initK8sFlags(deleteCmd.PersistentFlags())
@@ -165,9 +157,6 @@ func init() {
 	deleteCmd.AddCommand(deleteQuickstart)
 	deleteCmd.AddCommand(deleteSecretAgent)
 	deleteCmd.AddCommand(deleteDsOperator)
-	deleteCmd.AddCommand(deleteForgeopsBase)
-	deleteCmd.AddCommand(deleteForgeopsDirectory)
-	deleteCmd.AddCommand(deleteForgeopsApps)
-
+	generateFRComponentDeleteCommands()
 	rootCmd.AddCommand(deleteCmd)
 }

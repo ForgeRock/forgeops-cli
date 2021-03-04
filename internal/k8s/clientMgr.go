@@ -201,6 +201,11 @@ func (cmgr clientMgr) DeleteObject(info *resource.Info) error {
 	}
 	obj, err := helper.DeleteWithOptions(info.Namespace, info.Name, &options)
 	if err != nil {
+		// Ignore notFound errors when deleting objects
+		if apierrors.IsNotFound(err) {
+			info.Refresh(obj, true)
+			return nil
+		}
 		return err
 	}
 	info.Refresh(obj, true)

@@ -189,14 +189,14 @@ func TestConditionExpression(t *testing.T) {
 					"state": "NotReady",
 				},
 			},
-			expectedError:  ErrExpressionResult,
+			expectedError:  k8s.ErrExpressionResult,
 			expectedResult: false,
 			testExpression: "sprintf(state.status)",
 		},
 	}
 
 	for _, tc := range td {
-		fn := conditionExpression(tc.testExpression)
+		fn := k8s.ConditionExpression(tc.testExpression)
 		testObject := &unstructured.Unstructured{
 			Object: tc.obj,
 		}
